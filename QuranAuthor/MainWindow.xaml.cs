@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuranAuthor.Helps;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,22 @@ namespace QuranAuthor
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ClipboardHelper clipboardHelper;
+
         public MainWindow()
         {
             InitializeComponent();
+            this.clipboardHelper = new ClipboardHelper(this);
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            this.clipboardHelper.Stop();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.clipboardHelper.Start();
         }
     }
 }
