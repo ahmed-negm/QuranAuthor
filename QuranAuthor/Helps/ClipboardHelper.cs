@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -14,6 +15,8 @@ namespace QuranAuthor.Helps
         private HwndSource hWndSource;
         private bool isViewing;
         private Window window;
+        private bool firstTime;
+        private bool secondCapture = false;
 
         public bool IsViewing
         {
@@ -34,6 +37,7 @@ namespace QuranAuthor.Helps
             WindowInteropHelper wih = new WindowInteropHelper(window);
             hWndSource = HwndSource.FromHwnd(wih.Handle);
 
+            firstTime = true;
             hWndSource.AddHook(this.WinProc);   // start processing window messages
             hWndNextViewer = Win32.SetClipboardViewer(hWndSource.Handle);   // set this window as a viewer
             isViewing = true;
@@ -67,8 +71,19 @@ namespace QuranAuthor.Helps
                     break;
 
                 case Win32.WM_DRAWCLIPBOARD:
-                    // TODO: clipboard content changed
-                    this.ExtractText();
+                    if (firstTime)
+                    {
+                        firstTime = false;
+                    }
+                    else
+                    {
+                        if (secondCapture)
+                        {
+                            this.ExtractText();
+                        }
+                        
+                        secondCapture = !secondCapture;
+                    }
                     // pass the message to the next viewer.
                     Win32.SendMessage(hWndNextViewer, msg, wParam, lParam);
                     break;
@@ -93,14 +108,12 @@ namespace QuranAuthor.Helps
             
             if (iData.GetDataPresent(DataFormats.Rtf))
             {
-                var documentBytes = Encoding.UTF8.GetBytes((string)iData.GetData(DataFormats.Rtf));
-                using (var stream = new MemoryStream(documentBytes))
-                {
-                    RichTextBox rtfBox = new RichTextBox();
-                    rtfBox.Selection.Load(stream, DataFormats.Rtf);
-                    string text = new TextRange(rtfBox.Document.ContentStart, rtfBox.Document.ContentEnd).Text;
-                    var bytes = Encoding.UTF8.GetBytes(text);
-                }
+                var rtf = (string)iData.GetData(DataFormats.Rtf);
+                var bitmap = WindowCapturer.Capture();
+
+                var selection = BitmapHelper.GetSnippetSelection(bitmap);
+                File.WriteAllText("E://test.txt", selection.ToString());
+                bitmap.Save("E://test.png", System.Drawing.Imaging.ImageFormat.Png);
             }
         }
     }
