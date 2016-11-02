@@ -9,6 +9,11 @@ using System.Windows.Interop;
 
 namespace QuranAuthor.Helps
 {
+    public class ItemCopiedEventArgs : EventArgs
+    {
+        public string Rtf { get; set; }
+    }
+
     public class ClipboardHelper
     {
         private IntPtr hWndNextViewer;
@@ -17,6 +22,10 @@ namespace QuranAuthor.Helps
         private Window window;
         private bool firstTime;
         private bool secondCapture = false;
+
+        
+
+        public event EventHandler<ItemCopiedEventArgs> ItemCopied;
 
         public bool IsViewing
         {
@@ -51,6 +60,15 @@ namespace QuranAuthor.Helps
             hWndNextViewer = IntPtr.Zero;
             hWndSource.RemoveHook(this.WinProc);
             isViewing = false;
+        }
+
+        protected virtual void OnItemCopied(ItemCopiedEventArgs e)
+        {
+            EventHandler<ItemCopiedEventArgs> handler = ItemCopied;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
         }
 
         private IntPtr WinProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -109,11 +127,12 @@ namespace QuranAuthor.Helps
             if (iData.GetDataPresent(DataFormats.Rtf))
             {
                 var rtf = (string)iData.GetData(DataFormats.Rtf);
-                var bitmap = WindowCapturer.Capture();
-
-                var selection = BitmapHelper.GetSnippetSelection(bitmap);
-                File.WriteAllText("E://test.txt", selection.ToString());
-                bitmap.Save("E://test.png", System.Drawing.Imaging.ImageFormat.Png);
+                if(!string.IsNullOrEmpty(rtf))
+                {
+                    ItemCopiedEventArgs args = new ItemCopiedEventArgs();
+                    args.Rtf = rtf;
+                    OnItemCopied(args);
+                }
             }
         }
     }
