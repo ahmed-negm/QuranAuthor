@@ -59,6 +59,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\Verse.cs" />
+    <Compile Include="Repositories\VerseRepository.cs" />
+    <Compile Include="Repositories\ChapterRepository.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -69,6 +72,7 @@
     </Compile>
     <Compile Include="Helps\BitmapHelper.cs" />
     <Compile Include="Helps\ClipboardHelper.cs" />
+    <Compile Include="Repositories\Repository.cs" />
     <Compile Include="Helps\ScreenCapturer.cs" />
     <Compile Include="Helps\Win32.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -77,6 +81,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Chapter.cs" />
     <Compile Include="Models\Snippet.cs" />
     <Compile Include="Models\SnippetSelection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
