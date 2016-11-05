@@ -17,20 +17,9 @@ namespace QuranAuthor.Repositories
             string sql = "SELECT * FROM verses WHERE chapterid = @chapterId AND number >= @startNumber AND number <= @endNumber";
             SQLiteCommand command = new SQLiteCommand(sql, Connection);
 
-            SQLiteParameter param = command.CreateParameter();
-            param.ParameterName = "@chapterId";
-            param.Value = chapterId;
-            command.Parameters.Add(param);
-
-            param = command.CreateParameter();
-            param.ParameterName = "@startNumber";
-            param.Value = startNumber;
-            command.Parameters.Add(param);
-
-            param = command.CreateParameter();
-            param.ParameterName = "@endNumber";
-            param.Value = endNumber;
-            command.Parameters.Add(param);
+            command.Parameters.AddWithValue("@chapterId", chapterId);
+            command.Parameters.AddWithValue("@startNumber", startNumber);
+            command.Parameters.AddWithValue("@endNumber", endNumber);
 
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
