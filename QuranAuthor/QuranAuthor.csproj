@@ -60,6 +60,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Models\Verse.cs" />
+    <Compile Include="Repositories\SnippetRepository.cs" />
     <Compile Include="Repositories\VerseRepository.cs" />
     <Compile Include="Repositories\ChapterRepository.cs" />
     <Compile Include="Services\SnippetService.cs" />
