@@ -42,9 +42,8 @@ namespace QuranAuthor.Helps
             return selection;
         }
 
-        public static Snippet CalculatePageSelection(SnippetSelection selection)
+        public static Snippet CalculatePageSelection(Snippet snippet, SnippetSelection selection)
         {
-            Snippet snippet = new Snippet();
             snippet.StartLine = selection.Start.Y < 80 ? 1 : (int)Math.Round(((decimal)selection.Start.Y - 66) / 40, 0) + 1;
             snippet.EndLine = selection.End.Y < 120 ? 1 : (int)Math.Round(((decimal)selection.End.Y - 66) / 40, 0);
 

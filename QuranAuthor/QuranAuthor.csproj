@@ -62,6 +62,7 @@
     <Compile Include="Models\Verse.cs" />
     <Compile Include="Repositories\VerseRepository.cs" />
     <Compile Include="Repositories\ChapterRepository.cs" />
+    <Compile Include="Services\SnippetService.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -114,6 +115,7 @@
   <ItemGroup>
     <Content Include="Lib\System.Data.SQLite.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

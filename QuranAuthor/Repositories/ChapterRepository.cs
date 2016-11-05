@@ -10,18 +10,22 @@ namespace QuranAuthor.Repositories
 {
     public class ChapterRepository : Repository
     {
+        private static List<Chapter> cachedChapters;
+
         public List<Chapter> GetChapters()
         {
-            var chapters = new List<Chapter>();
-            string sql = "SELECT * FROM Chapters";
-            SQLiteCommand command = new SQLiteCommand(sql, Connection);
-            SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
+            if (cachedChapters == null)
             {
-                chapters.Add(new Chapter(reader));
+                cachedChapters = new List<Chapter>();
+                string sql = "SELECT * FROM Chapters";
+                SQLiteCommand command = new SQLiteCommand(sql, Connection);
+                SQLiteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    cachedChapters.Add(new Chapter(reader));
+                }
             }
-
-            return chapters;
+            return cachedChapters;
         }
     }
 }
