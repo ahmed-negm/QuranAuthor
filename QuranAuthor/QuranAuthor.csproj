@@ -59,6 +59,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\Numeric.xaml.cs">
+      <DependentUpon>Numeric.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\Verse.cs" />
     <Compile Include="Repositories\SnippetRepository.cs" />
     <Compile Include="Repositories\VerseRepository.cs" />
@@ -67,6 +70,10 @@
     <Compile Include="SnippetWindow.xaml.cs">
       <DependentUpon>SnippetWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\Numeric.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

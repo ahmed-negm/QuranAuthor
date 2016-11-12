@@ -1,10 +1,13 @@
 ﻿using QuranAuthor.Helps;
+using QuranAuthor.Models;
 using QuranAuthor.Repositories;
 using QuranAuthor.Services;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 namespace QuranAuthor
@@ -16,6 +19,9 @@ namespace QuranAuthor
         private ClipboardHelper clipboardHelper;
         private SnippetService snippetService = new SnippetService();
         private SnippetRepository snippetRepository = new SnippetRepository();
+        private Snippet snippet;
+        private Bitmap page;
+        private bool suspendEvents = false;
 
         public SnippetWindow()
         {
@@ -26,7 +32,7 @@ namespace QuranAuthor
 
         private void ClipboardHelper_ItemCopied(object sender, ItemCopiedEventArgs e)
         {
-            var snippet = snippetService.ExtractSnippet(e.Rtf);
+            snippet = snippetService.ExtractSnippet(e.Rtf);
 
             var bitmap = WindowCapturer.Capture();
 
@@ -34,19 +40,33 @@ namespace QuranAuthor
 
             snippet = BitmapHelper.CalculatePageSelection(snippet, selection);
 
-            //snippetRepository.AddSnippet(snippet);
+            LoadImage();
+            renderSelection();
+            txtVerse.Text = snippet.Text;
 
-            var bmp = new Bitmap(@"E:\Fun\Tafseer\Images\Nexus 9\final\" + snippet.Page + ".png");
-            var rect = new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height);
+            suspendEvents = true;
+            numStart.Value = snippet.StartPoint;
+            numEnd.Value = snippet.EndPoint;
+            suspendEvents = false;
+        }
 
-            var upgradedBmp = bmp.Clone(rect, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            bmp.Dispose();
+        private void LoadImage()
+        {
+            var originalBmp = new Bitmap(@"E:\Fun\Tafseer\Images\Nexus 9\final\" + snippet.Page + ".png");
+            var rect = new System.Drawing.Rectangle(0, 0, originalBmp.Width, originalBmp.Height);
 
-            Bitmap page = BitmapHelper.FocusSelection(upgradedBmp, snippet);
+            page = originalBmp.Clone(rect, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            originalBmp.Dispose();
+        }
 
-            //page.Save("E://page.png", System.Drawing.Imaging.ImageFormat.Png);
+        private void renderSelection()
+        {
+            if (suspendEvents)
+            {
+                return;
+            }
 
-            imgPage.Source = BitmapToImageSource(page);
+            imgPage.Source = BitmapToImageSource(BitmapHelper.FocusSelection((Bitmap)page.Clone(), snippet));
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -72,6 +92,18 @@ namespace QuranAuthor
                 bitmapimage.EndInit();
 
                 return bitmapimage;
+            }
+        }
+
+        private void point_ValueChanged(object sender, EventArgs e)
+        {
+            if(snippet != null)
+            {
+                suspendEvents = true;
+                snippet.StartPoint = numStart.Value;
+                snippet.EndPoint = numEnd.Value;
+                suspendEvents = false;
+                renderSelection();
             }
         }
     }
