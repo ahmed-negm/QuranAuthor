@@ -64,6 +64,9 @@
     <Compile Include="Repositories\VerseRepository.cs" />
     <Compile Include="Repositories\ChapterRepository.cs" />
     <Compile Include="Services\SnippetService.cs" />
+    <Compile Include="SnippetWindow.xaml.cs">
+      <DependentUpon>SnippetWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -81,6 +84,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SnippetWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Chapter.cs" />

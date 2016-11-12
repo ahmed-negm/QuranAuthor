@@ -1,8 +1,9 @@
 ﻿<Window x:Class="QuranAuthor.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525" Closed="Window_Closed" Loaded="Window_Loaded">
+        Title="Quran Author" Height="768" Width="1024" WindowStartupLocation="CenterScreen">
     <Grid>
-        
+        <Image x:Name="imgPage" Height="750" Width="463" HorizontalAlignment="Right"/>
+        <Button x:Name="takeSnippet" Click="takeSnippet_Click" Width="100" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20">TakeSnippet</Button>
     </Grid>
 </Window>
