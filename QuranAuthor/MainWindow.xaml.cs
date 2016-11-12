@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using QuranAuthor.Helps;
+using System.Windows;
 
 namespace QuranAuthor
 {
@@ -12,7 +13,9 @@ namespace QuranAuthor
         private void takeSnippet_Click(object sender, RoutedEventArgs e)
         {
             SnippetWindow snipetWindow = new SnippetWindow();
-            snipetWindow.Show();
+            snipetWindow.ShowDialog();
+            imgPage.Source = BitmapHelper.BitmapToImageSource(snipetWindow.Page);
+            var snippet = snipetWindow.Snippet;
         }
     }
 }

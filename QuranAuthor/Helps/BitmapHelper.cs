@@ -3,6 +3,9 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Media.Imaging;
+using System.IO;
+using System.Drawing.Imaging;
 
 namespace QuranAuthor.Helps
 {
@@ -85,6 +88,21 @@ namespace QuranAuthor.Helps
             }
 
             return bitmap;
+        }
+
+        public static BitmapImage BitmapToImageSource(Bitmap page)
+        {
+            using (MemoryStream memory = new MemoryStream())
+            {
+                page.Save(memory, ImageFormat.Png);
+                memory.Position = 0;
+                BitmapImage bitmapimage = new BitmapImage();
+                bitmapimage.BeginInit();
+                bitmapimage.StreamSource = memory;
+                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapimage.EndInit();
+                return bitmapimage;
+            }
         }
 
         private static void Blur(Bitmap bitmap, int y, int x)

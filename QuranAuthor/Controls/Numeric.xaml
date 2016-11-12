@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
     <StackPanel Orientation="Horizontal" >
         <TextBox x:Name="txtPoint" FontSize="22" TextChanged="txtPoint_TextChanged" PreviewKeyDown="txtPoint_KeyDown" PreviewTextInput="txtPoint_PreviewTextInput"  Text="0" TextAlignment="Center" Width="100" Height="35" />
-        <StackPanel Orientation="Vertical" Height="35">
+        <StackPanel Orientation="Vertical" Height="35" VerticalAlignment="Center">
             <Button x:Name="cmdUp" Content="˄" Width="30" FontSize="10" Click="cmdUp_Click"/>
             <Button x:Name="cmdDown" Content="˅" Width="30" FontSize="10" Click="cmdDown_Click"/>
         </StackPanel>
