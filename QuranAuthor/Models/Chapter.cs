@@ -16,5 +16,10 @@ namespace QuranAuthor.Models
             this.Id = reader.GetInt32(0);
             this.Name = reader.GetString(1);
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0}:{1}", this.Id, this.Name);
+        }
     }
 }

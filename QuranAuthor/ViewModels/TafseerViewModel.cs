@@ -1,12 +1,30 @@
-﻿namespace QuranAuthor.ViewModels
+﻿using QuranAuthor.Commands;
+using QuranAuthor.Helps;
+using QuranAuthor.Models;
+using QuranAuthor.Repositories;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Drawing;
+using System.Windows.Input;
+namespace QuranAuthor.ViewModels
 {
     public class TafseerViewModel : ViewModelBase
     {
         #region Private Members
 
-        /*
-         private DelegateCommand computeHashCommand;
-         */
+        // Services
+        private ChapterRepository chapterRepository = new ChapterRepository();
+        private SnippetRepository snippetRepository = new SnippetRepository();
+
+        // Private properties
+        private Chapter chapter;
+        private Snippet snippet;
+
+
+        // Commands
+        private DelegateCommand deleteCommand;
+        private DelegateCommand upCommand;
+        private DelegateCommand downCommand;
 
         #endregion
 
@@ -14,57 +32,139 @@
 
         public TafseerViewModel()
         {
-            
+            this.Snippets = new ObservableCollection<Snippet>();
+            this.Chapter = this.Chapters[0];
         }
 
         #endregion
 
         #region Public Properties
 
-        /*
-        public string ComputedHash
+        public Chapter Chapter
         {
-            get { return computedHash; }
+            get { return this.chapter; }
             set
             {
-                computedHash = value;
-                OnPropertyChanged("ComputedHash");
+                this.chapter = value;
+                base.OnPropertyChanged("Chapter");
+                this.LoadSnippets();
             }
         }
-        */
 
-        #endregion
+        public Snippet Snippet
+        {
+            get { return this.snippet; }
+            set
+            {
+                this.snippet = value;
+                base.OnPropertyChanged("Snippet");
+            }
+        }
 
-        #region Commands
-
-        /*
-        public ICommand ComputeHashCommand
+        public List<Chapter> Chapters
         {
             get
             {
-                if (computeHashCommand == null)
-                {
-                    computeHashCommand = new DelegateCommand(ComputeHash, CanComputeHash);
-                }
-                return computeHashCommand;
+                return this.chapterRepository.GetChapters();
             }
         }
 
-        private bool CanComputeHash()
+        public ObservableCollection<Snippet> Snippets { get; set; }
+
+        public Bitmap Page { get; set; }
+
+        public ICommand DeleteCommand
         {
-            if (!string.IsNullOrEmpty(this.PlainText) && !string.IsNullOrEmpty(this.Salt))
-                return true;
-            else
-                return false;
+            get
+            {
+                if (deleteCommand == null)
+                {
+                    deleteCommand = new DelegateCommand(DeleteSnippet, CanDeleteSnippet);
+                }
+                return deleteCommand;
+            }
         }
 
-        private void ComputeHash()
+        public ICommand UpCommand
         {
-            hashing.ComputingResult();
-            ComputedHash = Result;
+            get
+            {
+                if (upCommand == null)
+                {
+                    upCommand = new DelegateCommand(UpSnippet, CanUpSnippet);
+                }
+                return upCommand;
+            }
         }
-        */
-        
+
+        public ICommand DownCommand
+        {
+            get
+            {
+                if (downCommand == null)
+                {
+                    downCommand = new DelegateCommand(DownSnippet, CanDownSnippet);
+                }
+                return downCommand;
+            }
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public void SnippetTaken(Snippet snippet, Bitmap page)
+        {
+            if (snippet.ChapterId != this.Chapter.Id)
+            {
+                MessageBoxHelper.Show("The snippet belong to different chapter.");
+                return;
+            }
+
+            this.Page = page;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private bool CanDeleteSnippet()
+        {
+            return this.Snippet != null;
+        }
+
+        private void DeleteSnippet()
+        {
+            MessageBoxHelper.Show("DeleteSnippet");
+        }
+
+        private bool CanUpSnippet()
+        {
+            return this.Snippet != null && this.snippet != this.Snippets[0];
+        }
+
+        private void UpSnippet()
+        {
+            MessageBoxHelper.Show("UpSnippet");
+        }
+
+        private bool CanDownSnippet()
+        {
+            return this.Snippet != null && this.snippet != this.Snippets[this.Snippets.Count - 1];
+        }
+
+        private void DownSnippet()
+        {
+            MessageBoxHelper.Show("DownSnippet");
+        }
+
+        private void LoadSnippets()
+        {
+            this.Snippets.Clear();
+            var snippets = this.snippetRepository.GetSnippets(this.chapter.Id);
+            snippets.ForEach(S => this.Snippets.Add(S));
+        }
+
         #endregion
     }
 }

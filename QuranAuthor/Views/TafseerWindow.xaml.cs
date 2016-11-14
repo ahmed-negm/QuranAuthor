@@ -9,15 +9,29 @@ namespace QuranAuthor.Views
         public TafseerWindow()
         {
             InitializeComponent();
-            this.DataContext = new TafseerViewModel();
+            this.ViewModel = new TafseerViewModel();
         }
 
-        private void takeSnippet_Click(object sender, RoutedEventArgs e)
+        public TafseerViewModel ViewModel
+        {
+            get
+            {
+                return this.DataContext as TafseerViewModel;
+            }
+            set
+            {
+                this.DataContext = value;
+            }
+        }
+
+        private void NewSnippet_Click(object sender, RoutedEventArgs e)
         {
             SnippetWindow snipetWindow = new SnippetWindow();
             snipetWindow.ShowDialog();
-            imgPage.Source = BitmapHelper.BitmapToImageSource(snipetWindow.Page);
-            var snippet = snipetWindow.Snippet;
+            if (snipetWindow.Snippet != null)
+            {
+                this.ViewModel.SnippetTaken(snipetWindow.Snippet, snipetWindow.Page);
+            }
         }
     }
 }
