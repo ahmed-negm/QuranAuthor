@@ -1,13 +1,15 @@
 ﻿using QuranAuthor.Helps;
+using QuranAuthor.ViewModels;
 using System.Windows;
 
-namespace QuranAuthor
+namespace QuranAuthor.Views
 {
-    public partial class MainWindow : Window
+    public partial class TafseerWindow : Window
     {
-        public MainWindow()
+        public TafseerWindow()
         {
             InitializeComponent();
+            this.DataContext = new TafseerViewModel();
         }
 
         private void takeSnippet_Click(object sender, RoutedEventArgs e)

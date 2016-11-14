@@ -10,7 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
-namespace QuranAuthor
+namespace QuranAuthor.Views
 {
     public partial class SnippetWindow : Window
     {

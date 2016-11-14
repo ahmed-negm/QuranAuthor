@@ -62,19 +62,26 @@
     <Compile Include="Controls\Numeric.xaml.cs">
       <DependentUpon>Numeric.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Commands\CommandReference.cs" />
+    <Compile Include="Commands\DelegateCommand.cs" />
     <Compile Include="Models\Verse.cs" />
     <Compile Include="Repositories\SnippetRepository.cs" />
     <Compile Include="Repositories\VerseRepository.cs" />
     <Compile Include="Repositories\ChapterRepository.cs" />
     <Compile Include="Services\SnippetService.cs" />
-    <Compile Include="SnippetWindow.xaml.cs">
+    <Compile Include="Views\SnippetWindow.xaml.cs">
       <DependentUpon>SnippetWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\TafseerViewModel.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\TafseerWindow.xaml.cs">
+      <DependentUpon>TafseerWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\Numeric.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -87,11 +94,15 @@
     <Compile Include="Repositories\Repository.cs" />
     <Compile Include="Helps\ScreenCapturer.cs" />
     <Compile Include="Helps\Win32.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="SnippetWindow.xaml">
+    <Page Include="Views\SnippetWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TafseerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

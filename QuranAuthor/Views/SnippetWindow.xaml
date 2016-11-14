@@ -1,7 +1,7 @@
 ﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:Controls="clr-namespace:QuranAuthor.Controls" x:Class="QuranAuthor.SnippetWindow"
+        xmlns:Controls="clr-namespace:QuranAuthor.Controls" x:Class="QuranAuthor.Views.SnippetWindow"
         Title="SnippetWindow" Closed="Window_Closed" Loaded="Window_Loaded" WindowState="Maximized" FontSize="16">
     <Grid>
         <Grid.ColumnDefinitions>
