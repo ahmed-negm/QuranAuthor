@@ -135,7 +135,10 @@ namespace QuranAuthor.ViewModels
 
         private void DeleteSnippet()
         {
-            MessageBoxHelper.Show("DeleteSnippet");
+            int index = this.Snippets.IndexOf(this.Snippet);
+            this.snippetRepository.Delete(this.Snippet.Id);
+            LoadSnippets();
+            this.Snippet = this.Snippets.Count > index ? this.Snippets[index] : null;
         }
 
         private bool CanUpSnippet()
@@ -145,7 +148,10 @@ namespace QuranAuthor.ViewModels
 
         private void UpSnippet()
         {
-            MessageBoxHelper.Show("UpSnippet");
+            int index = this.Snippets.IndexOf(this.Snippet);
+            this.snippetRepository.Swap(this.Snippet, this.Snippets[index - 1]);
+            LoadSnippets();
+            this.Snippet = this.Snippets[index - 1];
         }
 
         private bool CanDownSnippet()
@@ -155,7 +161,10 @@ namespace QuranAuthor.ViewModels
 
         private void DownSnippet()
         {
-            MessageBoxHelper.Show("DownSnippet");
+            int index = this.Snippets.IndexOf(this.Snippet);
+            this.snippetRepository.Swap(this.Snippet, this.Snippets[index + 1]);
+            LoadSnippets();
+            this.Snippet = this.Snippets[index + 1];
         }
 
         private void LoadSnippets()

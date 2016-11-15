@@ -37,8 +37,8 @@ namespace QuranAuthor.Repositories
             var transaction = Connection.BeginTransaction();
 
             SQLiteCommand command = new SQLiteCommand(sql, Connection);
-            
-            command.Parameters.AddWithValue("@chapterId", snippet.ChapterId);
+
+            command.Parameters.AddWithValue("@ChapterId", snippet.ChapterId);
             command.Parameters.AddWithValue("@Page", snippet.Page);
             command.Parameters.AddWithValue("@StartVerse", snippet.StartVerse);
             command.Parameters.AddWithValue("@EndVerse", snippet.EndVerse);
@@ -54,6 +54,49 @@ namespace QuranAuthor.Repositories
             transaction.Commit();
 
             return snippet;
+        }
+
+        public void Swap(Snippet snippet1, Snippet snippet2)
+        {
+            this.Update(snippet1.Id, snippet2);
+            this.Update(snippet2.Id, snippet1);
+        }
+
+        public void Delete(int id)
+        {
+            string sql = "DELETE FROM snippets WHERE Id=@Id";
+
+            var transaction = Connection.BeginTransaction();
+
+            SQLiteCommand command = new SQLiteCommand(sql, Connection);
+
+            command.Parameters.AddWithValue("@Id", id);
+
+            command.ExecuteNonQuery();
+            transaction.Commit();
+        }
+
+        private void Update(int id, Snippet snippet)
+        {
+            string sql = "UPDATE snippets SET ChapterId=@ChapterId, Page=@Page, StartVerse=@StartVerse, EndVerse=@EndVerse, StartLine=@StartLine, EndLine=@EndLine, StartPoint=@StartPoint, EndPoint=@EndPoint, Text=@Text WHERE Id=@Id";
+
+            var transaction = Connection.BeginTransaction();
+
+            SQLiteCommand command = new SQLiteCommand(sql, Connection);
+
+            command.Parameters.AddWithValue("@ChapterId", snippet.ChapterId);
+            command.Parameters.AddWithValue("@Page", snippet.Page);
+            command.Parameters.AddWithValue("@StartVerse", snippet.StartVerse);
+            command.Parameters.AddWithValue("@EndVerse", snippet.EndVerse);
+            command.Parameters.AddWithValue("@StartLine", snippet.StartLine);
+            command.Parameters.AddWithValue("@EndLine", snippet.EndLine);
+            command.Parameters.AddWithValue("@StartPoint", snippet.StartPoint);
+            command.Parameters.AddWithValue("@EndPoint", snippet.EndPoint);
+            command.Parameters.AddWithValue("@Text", snippet.Text);
+            command.Parameters.AddWithValue("@Id", id);
+
+            command.ExecuteNonQuery();
+            transaction.Commit();
         }
     }
 }
