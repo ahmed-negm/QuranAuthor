@@ -69,6 +69,8 @@ namespace QuranAuthor.Services
 
             snippet.Text = verses.Select(V => V.Text).Aggregate((A, B) => A + Environment.NewLine + B);
 
+            snippet.Rtf = rtf;
+
             return snippet;
         }
 

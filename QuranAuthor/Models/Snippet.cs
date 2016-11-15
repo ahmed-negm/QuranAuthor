@@ -15,6 +15,7 @@ namespace QuranAuthor.Models
         public int StartPoint { get; set; }
         public int EndPoint { get; set; }
         public string Text { get; set; }
+        public string Rtf { get; set; }
 
         public Snippet()
         {
@@ -32,6 +33,7 @@ namespace QuranAuthor.Models
             this.StartPoint = reader.GetInt32(7);
             this.EndPoint = reader.GetInt32(8);
             this.Text = reader.GetString(9);
+            this.Rtf = reader.GetString(10);
         }
 
         public override string ToString()

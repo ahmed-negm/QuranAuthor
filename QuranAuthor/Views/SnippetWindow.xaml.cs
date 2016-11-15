@@ -28,6 +28,7 @@ namespace QuranAuthor.Views
             InitializeComponent();
             this.clipboardHelper = new ClipboardHelper(this);
             this.clipboardHelper.ItemCopied += ClipboardHelper_ItemCopied;
+            grdControls.Visibility = System.Windows.Visibility.Hidden;
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -65,7 +66,8 @@ namespace QuranAuthor.Views
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            this.Snippet.Text = txtVerse.Text.Trim();
+            this.DialogResult = true;
         }
 
         private void TxtVerse_TextChanged(object sender, TextChangedEventArgs e)
@@ -92,6 +94,7 @@ namespace QuranAuthor.Views
             numEnd.Value = Snippet.EndPoint;
             suspendEvents = false;
             btnDone.IsEnabled = false;
+            grdControls.Visibility = System.Windows.Visibility.Visible;
             this.Activate();
         }
 

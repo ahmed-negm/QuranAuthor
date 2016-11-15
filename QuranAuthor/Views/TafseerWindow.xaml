@@ -1,28 +1,29 @@
 ﻿<Window x:Class="QuranAuthor.Views.TafseerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Tafseer" WindowState="Maximized" FontSize="14">
+        Title="Tafseer"  Width="1024" Height="768" FlowDirection="RightToLeft" WindowStartupLocation="CenterScreen"
+        FontSize="24" FontFamily="Traditional Arabic">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="600"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="550"/>
         </Grid.ColumnDefinitions>
-        <Grid Margin="10">
+        <Grid Grid.Column="0" Margin="10">
             <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
+                <RowDefinition Height="35"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal">
-                <Button Click="NewSnippet_Click" Width="60" Margin="0,0,10,0">New</Button>
-                <Button Command="{Binding Path=DeleteCommand}" Width="60" Margin="0,0,10,0">Delete</Button>
-                <Button Command="{Binding Path=UpCommand}" Width="60" Margin="0,0,10,0">Up</Button>
-                <Button Command="{Binding Path=DownCommand}" Width="60" Margin="0,0,10,0">Down</Button>
+                <Button Click="NewSnippet_Click" Width="60" Margin="0,0,10,0">جديد</Button>
+                <Button Command="{Binding Path=DeleteCommand}" Width="60" Margin="0,0,10,0">حذف</Button>
+                <Button Command="{Binding Path=UpCommand}" Width="60" Margin="0,0,10,0">فوق</Button>
+                <Button Command="{Binding Path=DownCommand}" Width="60" Margin="0,0,10,0">تحت</Button>
             </StackPanel>
-            <ComboBox ItemsSource="{Binding Path=Chapters}" DisplayMemberPath="Name" SelectedItem="{Binding Path=Chapter}" HorizontalAlignment="Right" Width="200" />
+            <ComboBox ItemsSource="{Binding Path=Chapters}" DisplayMemberPath="Name" SelectedItem="{Binding Path=Chapter}" HorizontalAlignment="Right" Width="150" />
             <ListBox ItemsSource="{Binding Path=Snippets}" SelectedItem="{Binding Path=Snippet}" Grid.Row="1" Margin="0,10,0,0" />
         </Grid>
-        
-        <Image x:Name="imgPage" Grid.Column="1" />
-        
+        <Grid Grid.Column="1">
+            
+        </Grid>
     </Grid>
 </Window>

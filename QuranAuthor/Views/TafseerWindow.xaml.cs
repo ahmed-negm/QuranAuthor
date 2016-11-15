@@ -27,8 +27,7 @@ namespace QuranAuthor.Views
         private void NewSnippet_Click(object sender, RoutedEventArgs e)
         {
             SnippetWindow snipetWindow = new SnippetWindow();
-            snipetWindow.ShowDialog();
-            if (snipetWindow.Snippet != null)
+            if (snipetWindow.ShowDialog() == true && snipetWindow.Snippet != null)
             {
                 this.ViewModel.SnippetTaken(snipetWindow.Snippet, snipetWindow.Page);
             }

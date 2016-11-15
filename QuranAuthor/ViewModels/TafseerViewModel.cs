@@ -33,7 +33,7 @@ namespace QuranAuthor.ViewModels
         public TafseerViewModel()
         {
             this.Snippets = new ObservableCollection<Snippet>();
-            this.Chapter = this.Chapters[0];
+            this.Chapter = this.Chapters[38];
         }
 
         #endregion
@@ -122,6 +122,9 @@ namespace QuranAuthor.ViewModels
             }
 
             this.Page = page;
+            this.snippetRepository.AddSnippet(snippet);
+            this.LoadSnippets();
+            this.Snippet = this.Snippets[this.Snippets.Count - 1];
         }
 
         #endregion

@@ -17,7 +17,7 @@ namespace QuranAuthor.Repositories
             if (cachedChapters == null)
             {
                 cachedChapters = new List<Chapter>();
-                string sql = "SELECT * FROM Chapters";
+                string sql = "SELECT * FROM Chapters Order By Id";
                 SQLiteCommand command = new SQLiteCommand(sql, Connection);
                 SQLiteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
