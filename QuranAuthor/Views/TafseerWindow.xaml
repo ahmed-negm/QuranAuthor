@@ -4,7 +4,7 @@
         xmlns:Controls="clr-namespace:QuranAuthor.Controls"
         x:Class="QuranAuthor.Views.TafseerWindow"
         Title="Tafseer"  Width="1024" Height="768" FlowDirection="RightToLeft" WindowStartupLocation="CenterScreen"
-        FontSize="24" FontFamily="Traditional Arabic">
+        FontSize="20" FontFamily="GE SS Text Light">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
     </Window.Resources>
@@ -25,13 +25,13 @@
                 <Button Command="{Binding DownCommand}" Width="60" Margin="0,0,10,0" Content="تحت"/>
             </StackPanel>
             <ComboBox ItemsSource="{Binding Chapters}" DisplayMemberPath="Name" SelectedItem="{Binding Chapter}" HorizontalAlignment="Right" Width="150" />
-            <ListBox ItemsSource="{Binding Snippets}" SelectedItem="{Binding Snippet}" Grid.Row="1" Margin="0,10,0,0" />
+            <ListBox ItemsSource="{Binding Snippets}" SelectedItem="{Binding Snippet}" Grid.Row="1" Margin="0,10,0,0" FontFamily="Traditional Arabic" FontSize="24" />
         </Grid>
         <Grid Grid.Column="1" Margin="10" Visibility="{Binding Path=HasSnippet, Converter={StaticResource BoolToVisConverter} }">
             <Grid.RowDefinitions>
                 <RowDefinition Height="35"/>
                 <RowDefinition Height="150"/>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="45"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -46,11 +46,11 @@
                 <ComboBoxItem>ملحوظة</ComboBoxItem>
                 <ComboBoxItem>هداية</ComboBoxItem>
             </ComboBox>
-            <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Left" Visibility="Hidden">
                 <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Content="الإحداثي الرأسي: "/>
                 <Controls:Numeric  />
             </StackPanel>
-            <TextBox Grid.Row="3" Padding="10" FontSize="28"  FlowDirection="RightToLeft" TextWrapping="Wrap" />
+            <TextBox Grid.Row="3" Padding="10" AcceptsReturn="True" FlowDirection="RightToLeft" TextWrapping="Wrap" />
         </Grid>
     </Grid>
 </Window>
