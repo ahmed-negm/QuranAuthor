@@ -30,8 +30,6 @@ namespace QuranAuthor.Repositories
 
         public Snippet AddSnippet(Snippet snippet)
         {
-            var verses = new List<Verse>();
-
             string sql = "INSERT INTO snippets(ChapterId, Page, StartVerse, EndVerse, StartLine, EndLine, StartPoint, EndPoint, Text, Rtf) VALUES (@ChapterId, @Page, @StartVerse, @EndVerse, @StartLine, @EndLine, @StartPoint, @EndPoint, @Text, @Rtf);";
 
             var transaction = Connection.BeginTransaction();

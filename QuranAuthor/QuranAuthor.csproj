@@ -65,7 +65,9 @@
     <Compile Include="Commands\CommandReference.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
     <Compile Include="Helps\MessageBoxHelper.cs" />
+    <Compile Include="Models\Explanation.cs" />
     <Compile Include="Models\Verse.cs" />
+    <Compile Include="Repositories\ExplanationRepository.cs" />
     <Compile Include="Repositories\SnippetRepository.cs" />
     <Compile Include="Repositories\VerseRepository.cs" />
     <Compile Include="Repositories\ChapterRepository.cs" />

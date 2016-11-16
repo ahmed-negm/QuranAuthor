@@ -15,16 +15,22 @@ namespace QuranAuthor.ViewModels
         // Services
         private ChapterRepository chapterRepository = new ChapterRepository();
         private SnippetRepository snippetRepository = new SnippetRepository();
+        private ExplanationRepository explanationRepository = new ExplanationRepository();
 
         // Private properties
         private Chapter chapter;
         private Snippet snippet;
+        private bool hasSnippet;
+        private Explanation explanation;
 
 
         // Commands
         private DelegateCommand deleteCommand;
         private DelegateCommand upCommand;
         private DelegateCommand downCommand;
+        private DelegateCommand deleteExpCommand;
+        private DelegateCommand upExpCommand;
+        private DelegateCommand downExpCommand;
 
         #endregion
 
@@ -33,6 +39,7 @@ namespace QuranAuthor.ViewModels
         public TafseerViewModel()
         {
             this.Snippets = new ObservableCollection<Snippet>();
+            this.Explanations = new ObservableCollection<Explanation>();
             this.Chapter = this.Chapters[38];
         }
 
@@ -58,6 +65,27 @@ namespace QuranAuthor.ViewModels
             {
                 this.snippet = value;
                 base.OnPropertyChanged("Snippet");
+                this.LoadExplanations();
+            }
+        }
+
+        public Explanation Explanation
+        {
+            get { return this.explanation; }
+            set
+            {
+                this.explanation = value;
+                base.OnPropertyChanged("Explanation");
+            }
+        }
+
+        public bool HasSnippet
+        {
+            get { return this.hasSnippet; }
+            set
+            {
+                this.hasSnippet = value;
+                base.OnPropertyChanged("HasSnippet");
             }
         }
 
@@ -70,6 +98,8 @@ namespace QuranAuthor.ViewModels
         }
 
         public ObservableCollection<Snippet> Snippets { get; set; }
+
+        public ObservableCollection<Explanation> Explanations { get; set; }
 
         public Bitmap Page { get; set; }
 
@@ -106,6 +136,42 @@ namespace QuranAuthor.ViewModels
                     downCommand = new DelegateCommand(DownSnippet, CanDownSnippet);
                 }
                 return downCommand;
+            }
+        }
+
+        public ICommand DeleteExpCommand
+        {
+            get
+            {
+                if (deleteExpCommand == null)
+                {
+                    deleteExpCommand = new DelegateCommand(DeleteExplanation, CanDeleteExplanation);
+                }
+                return deleteExpCommand;
+            }
+        }
+
+        public ICommand UpExpCommand
+        {
+            get
+            {
+                if (upExpCommand == null)
+                {
+                    upExpCommand = new DelegateCommand(UpExplanation, CanUpExplanation);
+                }
+                return upExpCommand;
+            }
+        }
+
+        public ICommand DownExpCommand
+        {
+            get
+            {
+                if (downExpCommand == null)
+                {
+                    downExpCommand = new DelegateCommand(DownExplanation, CanDownExplanation);
+                }
+                return downExpCommand;
             }
         }
 
@@ -175,6 +241,56 @@ namespace QuranAuthor.ViewModels
             this.Snippets.Clear();
             var snippets = this.snippetRepository.GetSnippets(this.chapter.Id);
             snippets.ForEach(S => this.Snippets.Add(S));
+        }
+
+        private bool CanDeleteExplanation()
+        {
+            return this.Explanation != null;
+        }
+
+        private void DeleteExplanation()
+        {
+            int index = this.Explanations.IndexOf(this.Explanation);
+            this.explanationRepository.Delete(this.Explanation.Id);
+            LoadExplanations();
+            this.Explanation = this.Explanations.Count > index ? this.Explanations[index] : null;
+        }
+
+        private bool CanUpExplanation()
+        {
+            return this.Explanation != null && this.explanation != this.Explanations[0];
+        }
+
+        private void UpExplanation()
+        {
+            int index = this.Explanations.IndexOf(this.Explanation);
+            this.explanationRepository.Swap(this.Explanation, this.Explanations[index - 1]);
+            LoadExplanations();
+            this.Explanation = this.Explanations[index - 1];
+        }
+
+        private bool CanDownExplanation()
+        {
+            return this.Explanation != null && this.explanation != this.Explanations[this.Explanations.Count - 1];
+        }
+
+        private void DownExplanation()
+        {
+            int index = this.Explanations.IndexOf(this.Explanation);
+            this.explanationRepository.Swap(this.Explanation, this.Explanations[index + 1]);
+            LoadExplanations();
+            this.Explanation = this.Explanations[index + 1];
+        }
+
+        private void LoadExplanations()
+        {
+            this.HasSnippet = this.Snippet != null;
+            if (this.HasSnippet)
+            {
+                this.Explanations.Clear();
+                var explanations = this.explanationRepository.GetExplanations(this.Snippet.Id);
+                explanations.ForEach(S => this.Explanations.Add(S));
+            }
         }
 
         #endregion
