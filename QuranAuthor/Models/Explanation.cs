@@ -9,7 +9,7 @@ namespace QuranAuthor.Models
         Note = 1,
         Guid = 2
     }
-    public class Explanation
+    public class Explanation : ModelBase
     {
         public int Id { get; set; }
         public int SnippetId { get; set; }
@@ -26,8 +26,8 @@ namespace QuranAuthor.Models
             this.Id = reader.GetInt32(0);
             this.SnippetId = reader.GetInt32(1);
             this.Type = (ExplanationType)reader.GetInt32(2);
-            this.Top = reader.GetInt32(2);
-            this.Text = reader.GetString(9);
+            this.Top = reader.GetInt32(3);
+            this.Text = reader.GetString(4);
         }
 
         public override string ToString()

@@ -21,8 +21,12 @@ namespace QuranAuthor.ViewModels
         private Chapter chapter;
         private Snippet snippet;
         private bool hasSnippet;
+        private bool hasExplanation;
         private Explanation explanation;
-
+        private int explanationType;
+        private int explanationTop;
+        private string explanationText;
+        private bool suspendExplanationEvents;
 
         // Commands
         private DelegateCommand deleteCommand;
@@ -31,7 +35,7 @@ namespace QuranAuthor.ViewModels
         private DelegateCommand deleteExpCommand;
         private DelegateCommand upExpCommand;
         private DelegateCommand downExpCommand;
-
+        private DelegateCommand newExpCommand;
         #endregion
 
         #region Constructor
@@ -74,8 +78,10 @@ namespace QuranAuthor.ViewModels
             get { return this.explanation; }
             set
             {
+                this.SaveExplanation();
                 this.explanation = value;
                 base.OnPropertyChanged("Explanation");
+                this.LoadExplanation();
             }
         }
 
@@ -86,6 +92,53 @@ namespace QuranAuthor.ViewModels
             {
                 this.hasSnippet = value;
                 base.OnPropertyChanged("HasSnippet");
+            }
+        }
+
+        public bool HasExplanation
+        {
+            get { return this.hasExplanation; }
+            set
+            {
+                this.hasExplanation = value;
+                base.OnPropertyChanged("HasExplanation");
+            }
+        }
+
+        public int ExplanationType
+        {
+            get { return this.explanationType; }
+            set
+            {
+                this.explanationType = value;
+                base.OnPropertyChanged("ExplanationType");
+                this.Explanation.Type = (ExplanationType)value;
+                this.Explanation.RaisePropertyChanged("Type");
+                this.SaveExplanation();
+            }
+        }
+
+        public int ExplanationTop
+        {
+            get { return this.explanationTop; }
+            set
+            {
+                this.explanationTop = value;
+                base.OnPropertyChanged("ExplanationTop");
+                this.Explanation.Top = value;
+            }
+        }
+
+        public string ExplanationText
+        {
+            get { return this.explanationText; }
+            set
+            {
+                this.explanationText = value;
+                base.OnPropertyChanged("ExplanationText");
+                this.Explanation.Text = value;
+                this.SaveExplanation();
+                this.Explanation.RaisePropertyChanged("Text");
             }
         }
 
@@ -175,6 +228,18 @@ namespace QuranAuthor.ViewModels
             }
         }
 
+        public ICommand NewExpCommand
+        {
+            get
+            {
+                if (newExpCommand == null)
+                {
+                    newExpCommand = new DelegateCommand(NewExplanation, CanNewExplanation);
+                }
+                return newExpCommand;
+            }
+        }
+
         #endregion
 
         #region Public Methods
@@ -191,6 +256,16 @@ namespace QuranAuthor.ViewModels
             this.snippetRepository.AddSnippet(snippet);
             this.LoadSnippets();
             this.Snippet = this.Snippets[this.Snippets.Count - 1];
+        }
+
+        public void SaveExplanation()
+        {
+            if (this.suspendExplanationEvents || this.Explanation == null)
+            {
+                return;
+            }
+
+            this.explanationRepository.Update(this.Explanation);
         }
 
         #endregion
@@ -250,10 +325,12 @@ namespace QuranAuthor.ViewModels
 
         private void DeleteExplanation()
         {
+            this.suspendExplanationEvents = true;
             int index = this.Explanations.IndexOf(this.Explanation);
             this.explanationRepository.Delete(this.Explanation.Id);
             LoadExplanations();
             this.Explanation = this.Explanations.Count > index ? this.Explanations[index] : null;
+            this.suspendExplanationEvents = false;
         }
 
         private bool CanUpExplanation()
@@ -263,10 +340,13 @@ namespace QuranAuthor.ViewModels
 
         private void UpExplanation()
         {
+            this.suspendExplanationEvents = true;
             int index = this.Explanations.IndexOf(this.Explanation);
             this.explanationRepository.Swap(this.Explanation, this.Explanations[index - 1]);
             LoadExplanations();
             this.Explanation = this.Explanations[index - 1];
+            this.LoadExplanation();
+            this.suspendExplanationEvents = false;
         }
 
         private bool CanDownExplanation()
@@ -276,10 +356,30 @@ namespace QuranAuthor.ViewModels
 
         private void DownExplanation()
         {
+            this.suspendExplanationEvents = true;
             int index = this.Explanations.IndexOf(this.Explanation);
             this.explanationRepository.Swap(this.Explanation, this.Explanations[index + 1]);
             LoadExplanations();
             this.Explanation = this.Explanations[index + 1];
+            this.LoadExplanation();
+            this.suspendExplanationEvents = false;
+        }
+
+        private bool CanNewExplanation()
+        {
+            return this.snippet != null;
+        }
+
+        private void NewExplanation()
+        {
+            var newExplanation = new Explanation();
+            newExplanation.SnippetId = this.Snippet.Id;
+            newExplanation.Type = 0;
+            newExplanation.Top = 0;
+            newExplanation.Text = "-";
+            this.explanationRepository.AddExplanation(newExplanation);
+            this.LoadExplanations();
+            this.Explanation = this.Explanations[this.Explanations.Count - 1];
         }
 
         private void LoadExplanations()
@@ -290,6 +390,19 @@ namespace QuranAuthor.ViewModels
                 this.Explanations.Clear();
                 var explanations = this.explanationRepository.GetExplanations(this.Snippet.Id);
                 explanations.ForEach(S => this.Explanations.Add(S));
+            }
+        }
+
+        private void LoadExplanation()
+        {
+            this.HasExplanation = this.Explanation != null;
+            if(this.HasExplanation)
+            {
+                this.suspendExplanationEvents = true;
+                this.ExplanationType = (int)this.Explanation.Type;
+                this.ExplanationTop = this.Explanation.Top;
+                this.ExplanationText = this.Explanation.Text;
+                this.suspendExplanationEvents = false;
             }
         }
 

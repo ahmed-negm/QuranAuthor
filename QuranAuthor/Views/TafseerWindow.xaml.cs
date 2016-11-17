@@ -32,5 +32,17 @@ namespace QuranAuthor.Views
                 this.ViewModel.SnippetTaken(snipetWindow.Snippet, snipetWindow.Page);
             }
         }
+
+        private void Window_Closed(object sender, System.EventArgs e)
+        {
+            this.ViewModel.SaveExplanation();
+        }
+
+        private void NewExp_Click(object sender, RoutedEventArgs e)
+        {
+            this.ViewModel.NewExpCommand.Execute(null);
+            txtExp.SelectAll();
+            txtExp.Focus();
+        }
     }
 }

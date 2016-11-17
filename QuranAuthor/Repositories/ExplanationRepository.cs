@@ -27,13 +27,13 @@ namespace QuranAuthor.Repositories
 
         public Explanation AddExplanation(Explanation explanation)
         {
-            string sql = "INSERT INTO explanations(SnippetsId, Type, Top, Text) VALUES (@SnippetsId, @Type, @Top, @Text);";
+            string sql = "INSERT INTO explanations(SnippetId, Type, Top, Text) VALUES (@SnippetId, @Type, @Top, @Text);";
 
             var transaction = Connection.BeginTransaction();
 
             SQLiteCommand command = new SQLiteCommand(sql, Connection);
 
-            command.Parameters.AddWithValue("@SnippetsId", explanation.SnippetId);
+            command.Parameters.AddWithValue("@SnippetId", explanation.SnippetId);
             command.Parameters.AddWithValue("@Type", (int)explanation.Type);
             command.Parameters.AddWithValue("@Top", explanation.Top);
             command.Parameters.AddWithValue("@Text", explanation.Text);
@@ -59,6 +59,11 @@ namespace QuranAuthor.Repositories
             command.ExecuteNonQuery();
             transaction.Commit();
         }
+        
+        public void Update(Explanation explanation)
+        {
+            this.Update(explanation.Id, explanation);
+        }
 
         public void Swap(Explanation explanation1, Explanation explanation2)
         {
@@ -68,13 +73,13 @@ namespace QuranAuthor.Repositories
 
         private void Update(int id, Explanation explanation)
         {
-            string sql = "UPDATE explanations SET SnippetsId=@SnippetsId, Type=@Type, Top=@Top, Text=@Text WHERE Id=@Id";
+            string sql = "UPDATE explanations SET SnippetId=@SnippetId, Type=@Type, Top=@Top, Text=@Text WHERE Id=@Id";
 
             var transaction = Connection.BeginTransaction();
 
             SQLiteCommand command = new SQLiteCommand(sql, Connection);
 
-            command.Parameters.AddWithValue("@SnippetsId", explanation.SnippetId);
+            command.Parameters.AddWithValue("@SnippetId", explanation.SnippetId);
             command.Parameters.AddWithValue("@Type", (int)explanation.Type);
             command.Parameters.AddWithValue("@Top", explanation.Top);
             command.Parameters.AddWithValue("@Text", explanation.Text);

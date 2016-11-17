@@ -2,11 +2,13 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Controls="clr-namespace:QuranAuthor.Controls"
+        xmlns:Converters="clr-namespace:QuranAuthor.Converters"
         x:Class="QuranAuthor.Views.TafseerWindow"
         Title="Tafseer"  Width="1024" Height="768" FlowDirection="RightToLeft" WindowStartupLocation="CenterScreen"
-        FontSize="20" FontFamily="GE SS Text Light">
+        FontSize="20" FontFamily="GE SS Text Light" Closed="Window_Closed">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+        <Converters:TypeToColorConverter x:Key="ColorConverter" />
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -27,7 +29,7 @@
             <ComboBox ItemsSource="{Binding Chapters}" DisplayMemberPath="Name" SelectedItem="{Binding Chapter}" HorizontalAlignment="Right" Width="150" />
             <ListBox ItemsSource="{Binding Snippets}" SelectedItem="{Binding Snippet}" Grid.Row="1" Margin="0,10,0,0" FontFamily="Traditional Arabic" FontSize="24" />
         </Grid>
-        <Grid Grid.Column="1" Margin="10" Visibility="{Binding Path=HasSnippet, Converter={StaticResource BoolToVisConverter} }">
+        <Grid Grid.Column="1" Margin="10" Visibility="{Binding HasSnippet, Converter={StaticResource BoolToVisConverter} }">
             <Grid.RowDefinitions>
                 <RowDefinition Height="35"/>
                 <RowDefinition Height="150"/>
@@ -35,22 +37,29 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Command="{Binding NewExpCommand}" Width="60" Margin="0,0,10,0" Content="جديد"/>
+                <Button Width="60" Margin="0,0,10,0" Content="جديد" Click="NewExp_Click"/>
                 <Button Command="{Binding DeleteExpCommand}" Width="60" Margin="0,0,10,0" Content="حذف"/>
                 <Button Command="{Binding UpExpCommand}" Width="60" Margin="0,0,10,0" Content="فوق"/>
                 <Button Command="{Binding DownExpCommand}" Width="60" Content="تحت"/>
             </StackPanel>
-            <ListBox ItemsSource="{Binding Explanations}" SelectedItem="{Binding Explanation}" Grid.Row="1" Margin="0,10,0,0" />
-            <ComboBox Grid.Row="2"  SelectedItem="{Binding ExpType}" HorizontalAlignment="Right" Margin="5" Width="150" >
+            <ListBox ItemsSource="{Binding Explanations}" SelectedItem="{Binding Explanation}" Grid.Row="1" Margin="0,10,0,0">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Text}" Foreground="{Binding Path=Type, Converter={StaticResource ColorConverter}}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <ComboBox Grid.Row="2" SelectedIndex="{Binding ExplanationType}" HorizontalAlignment="Right" Margin="5" Width="100" Visibility="{Binding HasExplanation, Converter={StaticResource BoolToVisConverter}}" >
                 <ComboBoxItem>شرح</ComboBoxItem>
                 <ComboBoxItem>ملحوظة</ComboBoxItem>
                 <ComboBoxItem>هداية</ComboBoxItem>
             </ComboBox>
-            <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Left" Visibility="Hidden">
+            <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Left" Visibility="{Binding HasExplanation, Converter={StaticResource BoolToVisConverter}}" >
                 <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Content="الإحداثي الرأسي: "/>
-                <Controls:Numeric  />
+                <Controls:Numeric />
             </StackPanel>
-            <TextBox Grid.Row="3" Padding="10" AcceptsReturn="True" FlowDirection="RightToLeft" TextWrapping="Wrap" />
+            <TextBox x:Name="txtExp" Text="{Binding ExplanationText}" Grid.Row="3" Padding="10" AcceptsReturn="True" FlowDirection="RightToLeft" TextWrapping="Wrap" Visibility="{Binding HasExplanation, Converter={StaticResource BoolToVisConverter}}" />
         </Grid>
     </Grid>
 </Window>

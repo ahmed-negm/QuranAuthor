@@ -64,8 +64,10 @@
     </Compile>
     <Compile Include="Commands\CommandReference.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
+    <Compile Include="Converters\TypeToColorConverter.cs" />
     <Compile Include="Helps\MessageBoxHelper.cs" />
     <Compile Include="Models\Explanation.cs" />
+    <Compile Include="Models\ModelBase.cs" />
     <Compile Include="Models\Verse.cs" />
     <Compile Include="Repositories\ExplanationRepository.cs" />
     <Compile Include="Repositories\SnippetRepository.cs" />
