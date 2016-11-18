@@ -100,11 +100,7 @@ namespace QuranAuthor.Views
 
         private void LoadImage()
         {
-            var originalBmp = new Bitmap(@"E:\Fun\Tafseer\Images\Nexus 9\final\" + Snippet.Page + ".png");
-            var rect = new System.Drawing.Rectangle(0, 0, originalBmp.Width, originalBmp.Height);
-
-            originalPage = originalBmp.Clone(rect, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            originalBmp.Dispose();
+            originalPage = BitmapHelper.LoadPage(Snippet.Page);
         }
 
         private void RenderSelection()

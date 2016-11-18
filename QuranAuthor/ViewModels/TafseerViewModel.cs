@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Windows.Input;
+using System.Windows.Media;
 namespace QuranAuthor.ViewModels
 {
     public class TafseerViewModel : ViewModelBase
@@ -27,6 +28,8 @@ namespace QuranAuthor.ViewModels
         private int explanationTop;
         private string explanationText;
         private bool suspendExplanationEvents;
+        private bool isEditMode;
+        private ImageSource imageSource;
 
         // Commands
         private DelegateCommand deleteCommand;
@@ -36,6 +39,8 @@ namespace QuranAuthor.ViewModels
         private DelegateCommand upExpCommand;
         private DelegateCommand downExpCommand;
         private DelegateCommand newExpCommand;
+        private DelegateCommand switchModeCommand;
+        
         #endregion
 
         #region Constructor
@@ -45,6 +50,7 @@ namespace QuranAuthor.ViewModels
             this.Snippets = new ObservableCollection<Snippet>();
             this.Explanations = new ObservableCollection<Explanation>();
             this.Chapter = this.Chapters[38];
+            this.IsEditMode = true;
         }
 
         #endregion
@@ -85,6 +91,16 @@ namespace QuranAuthor.ViewModels
             }
         }
 
+        public ImageSource ImageSource
+        {
+            get { return this.imageSource; }
+            set
+            {
+                this.imageSource = value;
+                base.OnPropertyChanged("ImageSource");
+            }
+        }
+
         public bool HasSnippet
         {
             get { return this.hasSnippet; }
@@ -102,6 +118,16 @@ namespace QuranAuthor.ViewModels
             {
                 this.hasExplanation = value;
                 base.OnPropertyChanged("HasExplanation");
+            }
+        }
+
+        public bool IsEditMode
+        {
+            get { return this.isEditMode; }
+            set
+            {
+                this.isEditMode = value;
+                base.OnPropertyChanged("IsEditMode");
             }
         }
 
@@ -240,6 +266,18 @@ namespace QuranAuthor.ViewModels
             }
         }
 
+        public ICommand SwitchModeCommand
+        {
+            get
+            {
+                if (switchModeCommand == null)
+                {
+                    switchModeCommand = new DelegateCommand(SwitchMode, CanSwitchMode);
+                }
+                return switchModeCommand;
+            }
+        }
+        
         #endregion
 
         #region Public Methods
@@ -403,6 +441,23 @@ namespace QuranAuthor.ViewModels
                 this.ExplanationTop = this.Explanation.Top;
                 this.ExplanationText = this.Explanation.Text;
                 this.suspendExplanationEvents = false;
+            }
+        }
+
+        private bool CanSwitchMode()
+        {
+            return this.snippet != null;
+        }
+
+        private void SwitchMode()
+        {
+            this.IsEditMode = !this.IsEditMode;
+            if(!this.IsEditMode)
+            {
+                this.Page = BitmapHelper.LoadPage(this.Snippet.Page);
+                this.Page = BitmapHelper.FocusSelection(this.Page, this.Snippet);
+                Bitmap expPage = BitmapHelper.DrawExplanation((Bitmap)this.Page.Clone(), this.Explanations);
+                this.ImageSource = BitmapHelper.BitmapToImageSource(this.Page);
             }
         }
 

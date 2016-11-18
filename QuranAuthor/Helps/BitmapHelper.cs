@@ -6,13 +6,14 @@ using System.Drawing;
 using System.Windows.Media.Imaging;
 using System.IO;
 using System.Drawing.Imaging;
+using System.Configuration;
 
 namespace QuranAuthor.Helps
 {
     public static class BitmapHelper
     {
+        private static string pagesPath = ConfigurationManager.AppSettings["PagesPath"];
         private static Color YellowColor = Color.FromArgb(255, 246, 129);
-        private static Color FocusColor = Color.FromArgb(125, 255, 246, 129);
 
         public static SnippetSelection GetSnippetSelection(Bitmap bitmap)
         {
@@ -103,6 +104,22 @@ namespace QuranAuthor.Helps
                 bitmapimage.EndInit();
                 return bitmapimage;
             }
+        }
+
+        public static Bitmap LoadPage(int pageNumber)
+        {
+            var bmp = new Bitmap(Path.Combine(pagesPath, pageNumber + ".png"));
+            var rect = new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height);
+
+            var result = bmp.Clone(rect, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            bmp.Dispose();
+
+            return result;
+        }
+
+        public static Bitmap DrawExplanation(Bitmap bitmap, IList<Explanation> explanations)
+        {
+            return bitmap;
         }
 
         private static void Blur(Bitmap bitmap, int y, int x)
