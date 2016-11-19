@@ -152,6 +152,8 @@ namespace QuranAuthor.ViewModels
                 this.explanationTop = value;
                 base.OnPropertyChanged("ExplanationTop");
                 this.Explanation.Top = value;
+                this.Explanation.RaisePropertyChanged("Top");
+                this.SaveExplanation();
             }
         }
 
@@ -457,7 +459,8 @@ namespace QuranAuthor.ViewModels
                 this.Page = BitmapHelper.LoadPage(this.Snippet.Page);
                 this.Page = BitmapHelper.FocusSelection(this.Page, this.Snippet);
                 Bitmap expPage = BitmapHelper.DrawExplanation((Bitmap)this.Page.Clone(), this.Explanations);
-                this.ImageSource = BitmapHelper.BitmapToImageSource(this.Page);
+                expPage.Save("E:\\1.png");
+                this.ImageSource = BitmapHelper.BitmapToImageSource(expPage);
             }
         }
 
