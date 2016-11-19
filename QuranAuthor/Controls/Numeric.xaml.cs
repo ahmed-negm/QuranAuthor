@@ -19,7 +19,10 @@ namespace QuranAuthor.Controls
     public partial class Numeric : UserControl
     {
         public static readonly DependencyProperty ValueProperty =
-          DependencyProperty.Register("Value", typeof(int), typeof(Numeric));
+          DependencyProperty.Register("Value", typeof(int), typeof(Numeric), new PropertyMetadata(0, ValuePropertyChanged));
+
+        public static readonly DependencyProperty StepProperty =
+          DependencyProperty.Register("Step", typeof(int), typeof(Numeric));
 
         public event EventHandler ValueChanged;
 
@@ -28,24 +31,33 @@ namespace QuranAuthor.Controls
             get { return (int)base.GetValue(ValueProperty); }
             set
             {
-                txtPoint.Text = value.ToString();
                 base.SetValue(ValueProperty, value);
+            }
+        }
+
+        public int Step
+        {
+            get { return (int)base.GetValue(StepProperty); }
+            set
+            {
+                base.SetValue(StepProperty, value);
             }
         }
 
         public Numeric()
         {
             InitializeComponent();
+            this.Step = 5;
         }
 
         private void cmdUp_Click(object sender, RoutedEventArgs e)
         {
-            txtPoint.Text = (int.Parse(txtPoint.Text) + 5).ToString();
+            txtPoint.Text = (int.Parse(txtPoint.Text) + this.Step).ToString();
         }
 
         private void cmdDown_Click(object sender, RoutedEventArgs e)
         {
-            txtPoint.Text = (int.Parse(txtPoint.Text) - 5).ToString();
+            txtPoint.Text = (int.Parse(txtPoint.Text) - this.Step).ToString();
         }
 
         private void txtPoint_KeyDown(object sender, KeyEventArgs e)
@@ -78,6 +90,12 @@ namespace QuranAuthor.Controls
             {
                 ValueChanged(this, new NumericEventArgs(this.Value));
             }
+        }
+
+        private static void ValuePropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
+        {
+            var numeric = source as Numeric;
+            numeric.txtPoint.Text = e.NewValue.ToString();
         }
     }
 }

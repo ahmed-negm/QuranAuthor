@@ -62,7 +62,7 @@
             </ComboBox>
             <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Left" Visibility="{Binding HasExplanation, Converter={StaticResource BoolToVisConverter}}" >
                 <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Content="الإحداثي الرأسي: "/>
-                <Controls:Numeric x:Name="numExpTop" />
+                <Controls:Numeric x:Name="numExpTop" Step="20" />
             </StackPanel>
             <TextBox x:Name="txtExp" Text="{Binding ExplanationText}" Grid.Row="3" Padding="10" AcceptsReturn="True" FlowDirection="RightToLeft" TextWrapping="Wrap" Visibility="{Binding HasExplanation, Converter={StaticResource BoolToVisConverter}}" />
         </Grid>

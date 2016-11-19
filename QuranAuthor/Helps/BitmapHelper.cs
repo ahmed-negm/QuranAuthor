@@ -38,7 +38,7 @@ namespace QuranAuthor.Helps
                         {
                             selection.Start.X = x;
                         }
-                        if(firstX)
+                        if (firstX)
                         {
                             firstX = false;
                             selection.End.X = x;
@@ -69,7 +69,7 @@ namespace QuranAuthor.Helps
             {
                 for (int x = 49; x <= 1008; x++)
                 {
-                    if(y < startY || y > endY)
+                    if (y < startY || y > endY)
                     {
                         Blur(bitmap, y, x);
                     }
@@ -129,14 +129,16 @@ namespace QuranAuthor.Helps
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
             g.PixelOffsetMode = PixelOffsetMode.HighQuality;
             g.TextRenderingHint = TextRenderingHint.AntiAlias;
-            
+            /*
             foreach (var explanation in explanations)
             {
                 g.FillRoundedRectangle(explainBorderBrush, new Rectangle(49, explanation.Top, 960, 150), 20);
                 g.FillRoundedRectangle(Brushes.White, new Rectangle(51, explanation.Top + 2, 956, 146), 20);
                 g.DrawString(explanation.Text, new Font("GE SS Text Light", 36), explainBrush, new RectangleF(71, explanation.Top + 12, 916, 126), new StringFormat(StringFormatFlags.DirectionRightToLeft));
             }
-            
+            */
+            MeasureCharacterRangesRegions(g);
+
             g.Flush();
 
             return bitmap;
@@ -145,11 +147,11 @@ namespace QuranAuthor.Helps
         private static void Blur(Bitmap bitmap, int y, int x)
         {
             var color = bitmap.GetPixel(x, y);
-            if(color.R == 255 & color.G == 255 && color.B == 255)
+            if (color.R == 255 & color.G == 255 && color.B == 255)
             {
                 return;
             }
-            
+
             bitmap.SetPixel(x, y, Color.FromArgb(50, color));
         }
 
@@ -162,14 +164,14 @@ namespace QuranAuthor.Helps
                 var startY = 100 + ((line - 1) * 104);
                 for (int y = startY; y <= startY + 104; y++)
                 {
-                    if(line == snippet.StartLine && line == snippet.EndLine)
+                    if (line == snippet.StartLine && line == snippet.EndLine)
                     {
                         for (int x = snippet.EndPoint; x <= snippet.StartPoint; x++)
                         {
                             points.Add(new SnippetPoint(x, y));
                         }
                     }
-                    else if(line == snippet.StartLine)
+                    else if (line == snippet.StartLine)
                     {
                         for (int x = 49; x <= snippet.StartPoint; x++)
                         {
@@ -196,7 +198,7 @@ namespace QuranAuthor.Helps
             return points;
         }
 
-        public static GraphicsPath RoundedRect(Rectangle bounds, int radius)
+        private static GraphicsPath RoundedRect(Rectangle bounds, int radius)
         {
             int diameter = radius * 2;
             Size size = new Size(diameter, diameter);
@@ -228,7 +230,7 @@ namespace QuranAuthor.Helps
             return path;
         }
 
-        public static void DrawRoundedRectangle(this Graphics graphics, Pen pen, Rectangle bounds, int cornerRadius)
+        private static void DrawRoundedRectangle(this Graphics graphics, Pen pen, Rectangle bounds, int cornerRadius)
         {
             if (graphics == null)
                 throw new ArgumentNullException("graphics");
@@ -241,8 +243,7 @@ namespace QuranAuthor.Helps
             }
         }
 
-
-        public static void FillRoundedRectangle(this Graphics graphics, Brush brush, Rectangle bounds, int cornerRadius)
+        private static void FillRoundedRectangle(this Graphics graphics, Brush brush, Rectangle bounds, int cornerRadius)
         {
             if (graphics == null)
                 throw new ArgumentNullException("graphics");
@@ -253,6 +254,58 @@ namespace QuranAuthor.Helps
             {
                 graphics.FillPath(brush, path);
             }
+        }
+
+        private static void MeasureCharacterRangesRegions(Graphics g)
+        {
+
+            // Set up string.
+            string measureString = "أحمد حسن سيد نجم يلعب الكرة فى نادي الجيش";
+            Font stringFont = new Font("GE SS Text Light", 36);
+
+            // Set character ranges to "First" and "Second".
+            CharacterRange[] characterRanges = { new CharacterRange(5, 3), new CharacterRange(31, 4) };
+
+            // Create rectangle for layout.
+            float x = 50.0F;
+            float y = 50.0F;
+            float width = 500.0F;
+            float height = 300.0F;
+            RectangleF layoutRect = new RectangleF(x, y, width, height);
+
+            g.FillRectangle(Brushes.White, Rectangle.Round(layoutRect));
+            //g.DrawRectangle(new Pen(Color.Red, 2), Rectangle.Round(layoutRect));
+
+            // Set string format.
+            StringFormat stringFormat = new StringFormat();
+            stringFormat.FormatFlags = StringFormatFlags.DirectionRightToLeft;
+            stringFormat.SetMeasurableCharacterRanges(characterRanges);
+
+            // Draw string to screen.
+            g.DrawString(measureString, stringFont, Brushes.Black, layoutRect, stringFormat);
+
+            // Measure two ranges in string.
+            Region[] stringRegions = g.MeasureCharacterRanges(measureString, stringFont, layoutRect, stringFormat);
+
+            // Draw rectangle for first measured range.
+            RectangleF measureRect1 = stringRegions[0].GetBounds(g);
+            g.DrawRectangle(new Pen(Color.White, 2), Rectangle.Round(measureRect1));
+            g.FillRectangle(Brushes.White, Rectangle.Round(measureRect1));
+
+            // Draw rectangle for second measured range.
+            RectangleF measureRect2 = stringRegions[1].GetBounds(g);
+            g.DrawRectangle(new Pen(Color.White, 2), Rectangle.Round(measureRect2));
+            g.FillRectangle(Brushes.White, Rectangle.Round(measureRect2));
+
+
+            g.DrawString("حسن", stringFont, Brushes.Orange, AdjustRegionRect(measureRect1), stringFormat);
+
+            g.DrawString("نادي", stringFont, Brushes.Orange, AdjustRegionRect(measureRect2), stringFormat);
+        }
+
+        private static RectangleF AdjustRegionRect(RectangleF rect)
+        {
+            return new RectangleF(rect.Left - 12, rect.Top - 1, rect.Width + 20, rect.Height);
         }
     }
 }
