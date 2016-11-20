@@ -16,8 +16,15 @@ namespace QuranAuthor.Helps
     {
         private static string pagesPath = ConfigurationManager.AppSettings["PagesPath"];
         private static Color yellowColor = Color.FromArgb(255, 246, 129);
-        private static Brush explainBorderBrush = new SolidBrush(Color.FromArgb(255, 112, 173, 71));
+        private static Pen explainBorderPen = new Pen(Color.FromArgb(255, 112, 173, 71), 2);
+        private static Pen noteBorderPen = new Pen(Color.FromArgb(255, 191, 191, 191), 2);
+        private static Pen guidBorderPen = new Pen(Color.FromArgb(255, 255, 165, 0), 2);
         private static Brush explainBrush = new SolidBrush(Color.FromArgb(255, 0, 112, 192));
+        private static Brush noteBrush = new SolidBrush(Color.Black);
+        private static Brush guidBrush = new SolidBrush(Color.FromArgb(255, 255, 165, 0));
+        private static Font font36 = new Font("GE SS Text Light", 36);
+        private static Font font30 = new Font("GE SS Text Light", 30);
+        private static StringFormat rightToLeftStringFormat = new StringFormat(StringFormatFlags.DirectionRightToLeft);
 
         public static SnippetSelection GetSnippetSelection(Bitmap bitmap)
         {
@@ -124,20 +131,37 @@ namespace QuranAuthor.Helps
         public static Bitmap DrawExplanation(Bitmap bitmap, IList<Explanation> explanations)
         {
             var g = Graphics.FromImage(bitmap);
-
+            
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
             g.PixelOffsetMode = PixelOffsetMode.HighQuality;
             g.TextRenderingHint = TextRenderingHint.AntiAlias;
-            /*
+
+            guidBorderPen.DashCap = System.Drawing.Drawing2D.DashCap.Round;
+            guidBorderPen.DashPattern = new float[] { 4.0F, 2.0F, 1.0F, 3.0F };
+
             foreach (var explanation in explanations)
             {
-                g.FillRoundedRectangle(explainBorderBrush, new Rectangle(49, explanation.Top, 960, 150), 20);
-                g.FillRoundedRectangle(Brushes.White, new Rectangle(51, explanation.Top + 2, 956, 146), 20);
-                g.DrawString(explanation.Text, new Font("GE SS Text Light", 36), explainBrush, new RectangleF(71, explanation.Top + 12, 916, 126), new StringFormat(StringFormatFlags.DirectionRightToLeft));
+                var font = explanation.Type == ExplanationType.Explain ? font36 : font30;
+                var pen = explanation.Type == ExplanationType.Explain ? explainBorderPen : explanation.Type == ExplanationType.Note ? noteBorderPen : guidBorderPen;
+                var brush = explanation.Type == ExplanationType.Explain ? explainBrush : explanation.Type == ExplanationType.Note ? noteBrush : guidBrush;
+                var height = (int)g.MeasureString(explanation.Text, font, new SizeF(916, 1000), rightToLeftStringFormat).Height;
+
+                if (explanation.Type == ExplanationType.Explain)
+                {
+                    g.FillRoundedRectangle(Brushes.White, new Rectangle(51, explanation.Top + 2, 956, height + 20), 40);
+                    g.DrawRoundedRectangle(pen, new Rectangle(49, explanation.Top, 960, height + 24), 40);
+                }
+                else
+                {
+                    g.FillRectangle(Brushes.White, new Rectangle(51, explanation.Top + 2, 956, height + 20));
+                    g.DrawRectangle(pen, new Rectangle(49, explanation.Top, 960, height + 24));
+                }
+
+                g.DrawString(explanation.Text, font, brush, new RectangleF(71, explanation.Top + 12, 916, height), rightToLeftStringFormat);
             }
-            */
-            MeasureCharacterRangesRegions(g);
+            
+            //MeasureCharacterRangesRegions(g);
 
             g.Flush();
 
