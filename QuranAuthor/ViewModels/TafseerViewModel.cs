@@ -7,6 +7,9 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Linq;
+using System;
+
 namespace QuranAuthor.ViewModels
 {
     public class TafseerViewModel : ViewModelBase
@@ -30,6 +33,8 @@ namespace QuranAuthor.ViewModels
         private bool suspendExplanationEvents;
         private bool isEditMode;
         private ImageSource imageSource;
+        private int iconIndex;
+        private bool hasIcon;
 
         // Commands
         private DelegateCommand deleteCommand;
@@ -49,6 +54,7 @@ namespace QuranAuthor.ViewModels
         {
             this.Snippets = new ObservableCollection<Snippet>();
             this.Explanations = new ObservableCollection<Explanation>();
+            this.Icons = new ObservableCollection<string>();
             this.Chapter = this.Chapters[38];
             this.IsEditMode = true;
         }
@@ -170,6 +176,32 @@ namespace QuranAuthor.ViewModels
             }
         }
 
+        public int IconIndex
+        {
+            get { return this.iconIndex; }
+            set
+            {
+                this.iconIndex = value;
+                base.OnPropertyChanged("IconIndex");
+                if (value >= 0)
+                {
+                    this.Explanation.Icon = value;
+                    this.Explanation.RaisePropertyChanged("Icon");
+                    this.SaveExplanation();
+                }
+            }
+        }
+
+        public bool HasIcon
+        {
+            get { return this.hasIcon; }
+            set
+            {
+                this.hasIcon = value;
+                base.OnPropertyChanged("HasIcon");
+            }
+        }
+
         public List<Chapter> Chapters
         {
             get
@@ -181,6 +213,8 @@ namespace QuranAuthor.ViewModels
         public ObservableCollection<Snippet> Snippets { get; set; }
 
         public ObservableCollection<Explanation> Explanations { get; set; }
+
+        public ObservableCollection<string> Icons { get; set; }
 
         public Bitmap Page { get; set; }
 
@@ -442,6 +476,20 @@ namespace QuranAuthor.ViewModels
                 this.ExplanationType = (int)this.Explanation.Type;
                 this.ExplanationTop = this.Explanation.Top;
                 this.ExplanationText = this.Explanation.Text;
+                this.HasIcon = this.explanation.Type != Models.ExplanationType.Explain;
+                if(this.HasIcon)
+                {
+                    this.Icons.Clear();
+                    if (this.explanation.Type == Models.ExplanationType.Note)
+                    {
+                        Enum.GetNames(typeof(NoteIcons)).ToList().ForEach(T => this.Icons.Add(T));
+                    }
+                    else
+                    {
+                        Enum.GetNames(typeof(GuideIcons)).ToList().ForEach(T => this.Icons.Add(T));
+                    }
+                    this.IconIndex = this.Explanation.Icon;
+                }
                 this.suspendExplanationEvents = false;
             }
         }

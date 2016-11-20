@@ -18,10 +18,10 @@ namespace QuranAuthor.Helps
         private static Color yellowColor = Color.FromArgb(255, 246, 129);
         private static Pen explainBorderPen = new Pen(Color.FromArgb(255, 112, 173, 71), 2);
         private static Pen noteBorderPen = new Pen(Color.FromArgb(255, 191, 191, 191), 2);
-        private static Pen guidBorderPen = new Pen(Color.FromArgb(255, 255, 165, 0), 2);
+        private static Pen guideBorderPen = new Pen(Color.FromArgb(255, 255, 165, 0), 2);
         private static Brush explainBrush = new SolidBrush(Color.FromArgb(255, 0, 112, 192));
         private static Brush noteBrush = new SolidBrush(Color.Black);
-        private static Brush guidBrush = new SolidBrush(Color.FromArgb(255, 255, 165, 0));
+        private static Brush guideBrush = new SolidBrush(Color.FromArgb(255, 255, 165, 0));
         private static Font font36 = new Font("GE SS Text Light", 36);
         private static Font font30 = new Font("GE SS Text Light", 30);
         private static StringFormat rightToLeftStringFormat = new StringFormat(StringFormatFlags.DirectionRightToLeft);
@@ -137,14 +137,14 @@ namespace QuranAuthor.Helps
             g.PixelOffsetMode = PixelOffsetMode.HighQuality;
             g.TextRenderingHint = TextRenderingHint.AntiAlias;
 
-            guidBorderPen.DashCap = System.Drawing.Drawing2D.DashCap.Round;
-            guidBorderPen.DashPattern = new float[] { 4.0F, 2.0F, 1.0F, 3.0F };
+            guideBorderPen.DashCap = System.Drawing.Drawing2D.DashCap.Round;
+            guideBorderPen.DashPattern = new float[] { 4.0F, 2.0F, 1.0F, 3.0F };
 
             foreach (var explanation in explanations)
             {
                 var font = explanation.Type == ExplanationType.Explain ? font36 : font30;
-                var pen = explanation.Type == ExplanationType.Explain ? explainBorderPen : explanation.Type == ExplanationType.Note ? noteBorderPen : guidBorderPen;
-                var brush = explanation.Type == ExplanationType.Explain ? explainBrush : explanation.Type == ExplanationType.Note ? noteBrush : guidBrush;
+                var pen = explanation.Type == ExplanationType.Explain ? explainBorderPen : explanation.Type == ExplanationType.Note ? noteBorderPen : guideBorderPen;
+                var brush = explanation.Type == ExplanationType.Explain ? explainBrush : explanation.Type == ExplanationType.Note ? noteBrush : guideBrush;
                 var height = (int)g.MeasureString(explanation.Text, font, new SizeF(916, 1000), rightToLeftStringFormat).Height;
 
                 if (explanation.Type == ExplanationType.Explain)

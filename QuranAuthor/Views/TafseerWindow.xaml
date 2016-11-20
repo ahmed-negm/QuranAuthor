@@ -61,8 +61,10 @@
                 <ComboBoxItem>هداية</ComboBoxItem>
             </ComboBox>
             <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Left" Visibility="{Binding HasExplanation, Converter={StaticResource BoolToVisConverter}}" >
-                <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Content="الإحداثي الرأسي: "/>
+                <Label  VerticalAlignment="Center" Content="الإحداثي:"/>
                 <Controls:Numeric x:Name="numExpTop" Step="20" />
+                <Label VerticalAlignment="Center" Content="     أيقونة:" Visibility="{Binding HasIcon, Converter={StaticResource BoolToVisConverter}}"/>
+                <ComboBox VerticalAlignment="Center" ItemsSource="{Binding Icons}" SelectedIndex="{Binding IconIndex}"  Width="90" FontSize="16" Visibility="{Binding HasIcon, Converter={StaticResource BoolToVisConverter}}" />
             </StackPanel>
             <TextBox x:Name="txtExp" Text="{Binding ExplanationText}" Grid.Row="3" Padding="10" AcceptsReturn="True" FlowDirection="RightToLeft" TextWrapping="Wrap" Visibility="{Binding HasExplanation, Converter={StaticResource BoolToVisConverter}}" />
         </Grid>

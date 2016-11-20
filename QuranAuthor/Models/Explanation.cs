@@ -7,14 +7,29 @@ namespace QuranAuthor.Models
     {
         Explain = 0,
         Note = 1,
-        Guid = 2
+        Guide = 2
     }
+
+    public enum NoteIcons
+    {
+        None = 0,
+        General = 1
+    }
+
+    public enum GuideIcons
+    {
+        None = 0,
+        Idea = 1,
+        Arrow = 2
+    }
+
     public class Explanation : ModelBase
     {
         public int Id { get; set; }
         public int SnippetId { get; set; }
         public ExplanationType Type { get; set; }
         public int Top { get; set; }
+        public int Icon { get; set; }
         public string Text { get; set; }
 
         public Explanation()
@@ -27,7 +42,8 @@ namespace QuranAuthor.Models
             this.SnippetId = reader.GetInt32(1);
             this.Type = (ExplanationType)reader.GetInt32(2);
             this.Top = reader.GetInt32(3);
-            this.Text = reader.GetString(4);
+            this.Icon = reader.GetInt32(4);
+            this.Text = reader.GetString(5);
         }
 
         public override string ToString()

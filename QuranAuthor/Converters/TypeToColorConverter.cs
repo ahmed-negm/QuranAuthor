@@ -16,7 +16,7 @@ namespace QuranAuthor.Converters
                     return "#5b9bd5";
                 case ExplanationType.Note:
                     return "Black";
-                case ExplanationType.Guid:
+                case ExplanationType.Guide:
                     return "#ffa500";
                 default:
                     return "Red";

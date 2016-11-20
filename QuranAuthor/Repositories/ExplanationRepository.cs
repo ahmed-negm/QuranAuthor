@@ -27,7 +27,7 @@ namespace QuranAuthor.Repositories
 
         public Explanation AddExplanation(Explanation explanation)
         {
-            string sql = "INSERT INTO explanations(SnippetId, Type, Top, Text) VALUES (@SnippetId, @Type, @Top, @Text);";
+            string sql = "INSERT INTO explanations(SnippetId, Type, Top, Icon, Text) VALUES (@SnippetId, @Type, @Top, @Icon, @Text);";
 
             var transaction = Connection.BeginTransaction();
 
@@ -36,6 +36,7 @@ namespace QuranAuthor.Repositories
             command.Parameters.AddWithValue("@SnippetId", explanation.SnippetId);
             command.Parameters.AddWithValue("@Type", (int)explanation.Type);
             command.Parameters.AddWithValue("@Top", explanation.Top);
+            command.Parameters.AddWithValue("@Icon", explanation.Icon);
             command.Parameters.AddWithValue("@Text", explanation.Text);
 
             command.ExecuteNonQuery();
@@ -73,7 +74,7 @@ namespace QuranAuthor.Repositories
 
         private void Update(int id, Explanation explanation)
         {
-            string sql = "UPDATE explanations SET SnippetId=@SnippetId, Type=@Type, Top=@Top, Text=@Text WHERE Id=@Id";
+            string sql = "UPDATE explanations SET SnippetId=@SnippetId, Type=@Type, Top=@Top, Icon=@Icon, Text=@Text WHERE Id=@Id";
 
             var transaction = Connection.BeginTransaction();
 
@@ -82,6 +83,7 @@ namespace QuranAuthor.Repositories
             command.Parameters.AddWithValue("@SnippetId", explanation.SnippetId);
             command.Parameters.AddWithValue("@Type", (int)explanation.Type);
             command.Parameters.AddWithValue("@Top", explanation.Top);
+            command.Parameters.AddWithValue("@Icon", explanation.Icon);
             command.Parameters.AddWithValue("@Text", explanation.Text);
             command.Parameters.AddWithValue("@Id", id);
 
