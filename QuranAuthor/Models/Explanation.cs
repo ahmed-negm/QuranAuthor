@@ -13,7 +13,7 @@ namespace QuranAuthor.Models
     public enum NoteIcons
     {
         None = 0,
-        General = 1
+        Note = 1
     }
 
     public enum GuideIcons

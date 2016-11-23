@@ -15,6 +15,7 @@ namespace QuranAuthor.Helps
     public static class BitmapHelper
     {
         private static string pagesPath = ConfigurationManager.AppSettings["PagesPath"];
+        private static string iconsPath = ConfigurationManager.AppSettings["IconsPath"];
         private static Color yellowColor = Color.FromArgb(255, 246, 129);
         private static Pen explainBorderPen = new Pen(Color.FromArgb(255, 112, 173, 71), 2);
         private static Pen noteBorderPen = new Pen(Color.FromArgb(255, 191, 191, 191), 2);
@@ -25,6 +26,7 @@ namespace QuranAuthor.Helps
         private static Font font36 = new Font("GE SS Text Light", 36);
         private static Font font30 = new Font("GE SS Text Light", 30);
         private static StringFormat rightToLeftStringFormat = new StringFormat(StringFormatFlags.DirectionRightToLeft);
+        private static Dictionary<string, Bitmap> icons = new Dictionary<string, Bitmap>();
 
         public static SnippetSelection GetSnippetSelection(Bitmap bitmap)
         {
@@ -131,7 +133,7 @@ namespace QuranAuthor.Helps
         public static Bitmap DrawExplanation(Bitmap bitmap, IList<Explanation> explanations)
         {
             var g = Graphics.FromImage(bitmap);
-            
+
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
             g.PixelOffsetMode = PixelOffsetMode.HighQuality;
@@ -146,6 +148,7 @@ namespace QuranAuthor.Helps
                 var pen = explanation.Type == ExplanationType.Explain ? explainBorderPen : explanation.Type == ExplanationType.Note ? noteBorderPen : guideBorderPen;
                 var brush = explanation.Type == ExplanationType.Explain ? explainBrush : explanation.Type == ExplanationType.Note ? noteBrush : guideBrush;
                 var height = (int)g.MeasureString(explanation.Text, font, new SizeF(916, 1000), rightToLeftStringFormat).Height;
+                var width = 916;
 
                 if (explanation.Type == ExplanationType.Explain)
                 {
@@ -156,16 +159,46 @@ namespace QuranAuthor.Helps
                 {
                     g.FillRectangle(Brushes.White, new Rectangle(51, explanation.Top + 2, 956, height + 20));
                     g.DrawRectangle(pen, new Rectangle(49, explanation.Top, 960, height + 24));
+                    if (explanation.Icon > 0)
+                    {
+                        g.DrawImage(GetIcon(explanation.Type, explanation.Icon), new Point(940, explanation.Top + 8));
+                        width -= 50;
+                    }
                 }
 
-                g.DrawString(explanation.Text, font, brush, new RectangleF(71, explanation.Top + 12, 916, height), rightToLeftStringFormat);
+                g.DrawString(explanation.Text, font, brush, new RectangleF(71, explanation.Top + 12, width, height), rightToLeftStringFormat);
             }
-            
+
             //MeasureCharacterRangesRegions(g);
 
             g.Flush();
 
             return bitmap;
+        }
+
+        private static Bitmap GetIcon(ExplanationType explanationType, int icon)
+        {
+            var file = string.Empty;
+            switch (explanationType)
+            {
+                case ExplanationType.Note:
+                    file = ((NoteIcons)icon).ToString();
+                    break;
+                case ExplanationType.Guide:
+                    file = ((GuideIcons)icon).ToString();
+                    break;
+                default:
+                    break;
+            }
+            if (string.IsNullOrEmpty(file))
+            {
+                throw new Exception(string.Format("Icon {0} has no file", icon));
+            }
+            if (!icons.ContainsKey(file))
+            {
+                icons.Add(file, new Bitmap(Path.Combine(iconsPath, file + ".png")));
+            }
+            return icons[file];
         }
 
         private static void Blur(Bitmap bitmap, int y, int x)
