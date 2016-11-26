@@ -7,7 +7,7 @@ namespace QuranAuthor.Views
 {
     public partial class TafseerWindow : Window
     {
-        private bool suspendExplanationTopEvent = false;
+        private bool suspendEvents = false;
 
         public TafseerWindow()
         {
@@ -15,7 +15,12 @@ namespace QuranAuthor.Views
             this.ViewModel = new TafseerViewModel();
             this.ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             this.numExpTop.ValueChanged += numExpTop_ValueChanged;
+            this.numPage.ValueChanged += numPage_ValueChanged;
+
+            this.ViewModel.Chapter = this.ViewModel.Chapters[38];
         }
+
+        
 
         public TafseerViewModel ViewModel
         {
@@ -45,16 +50,32 @@ namespace QuranAuthor.Views
 
         private void numExpTop_ValueChanged(object sender, System.EventArgs e)
         {
-            this.suspendExplanationTopEvent = true;
+            this.suspendEvents = true;
             this.ViewModel.ExplanationTop = this.numExpTop.Value;
-            this.suspendExplanationTopEvent = false;
+            this.suspendEvents = false;
+        }
+
+        private void numPage_ValueChanged(object sender, System.EventArgs e)
+        {
+            this.suspendEvents = true;
+            this.ViewModel.CurrentPage = this.numPage.Value;
+            this.suspendEvents = false;
         }
 
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "ExplanationTop" && !this.suspendExplanationTopEvent)
+            if (this.suspendEvents)
+            {
+                return;
+            }
+
+            if (e.PropertyName == "ExplanationTop")
             {
                 this.numExpTop.Value = this.ViewModel.ExplanationTop;
+            }
+            else if (e.PropertyName == "CurrentPage")
+            {
+                this.numPage.Value = this.ViewModel.CurrentPage;
             }
         }
 

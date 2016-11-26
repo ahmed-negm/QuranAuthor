@@ -10,14 +10,15 @@ namespace QuranAuthor.Repositories
 {
     public class SnippetRepository : Repository
     {
-        public List<Snippet> GetSnippets(int chapterId)
+        public List<Snippet> GetSnippets(int chapterId, int page)
         {
             var snippets = new List<Snippet>();
 
-            string sql = "SELECT * FROM snippets WHERE chapterid = @chapterId Order By id";
+            string sql = "SELECT * FROM snippets WHERE chapterid = @chapterId AND page = @page Order By id";
             SQLiteCommand command = new SQLiteCommand(sql, Connection);
 
             command.Parameters.AddWithValue("@chapterId", chapterId);
+            command.Parameters.AddWithValue("@page", page);
 
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())

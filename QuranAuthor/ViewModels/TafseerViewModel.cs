@@ -35,6 +35,7 @@ namespace QuranAuthor.ViewModels
         private ImageSource imageSource;
         private int iconIndex;
         private bool hasIcon;
+        private int currentPage;
 
         // Commands
         private DelegateCommand deleteCommand;
@@ -55,7 +56,6 @@ namespace QuranAuthor.ViewModels
             this.Snippets = new ObservableCollection<Snippet>();
             this.Explanations = new ObservableCollection<Explanation>();
             this.Icons = new ObservableCollection<string>();
-            this.Chapter = this.Chapters[38];
             this.IsEditMode = true;
         }
 
@@ -70,7 +70,7 @@ namespace QuranAuthor.ViewModels
             {
                 this.chapter = value;
                 base.OnPropertyChanged("Chapter");
-                this.LoadSnippets();
+                this.CurrentPage = this.Chapter.StartPage;
             }
         }
 
@@ -147,6 +147,17 @@ namespace QuranAuthor.ViewModels
                 this.Explanation.Type = (ExplanationType)value;
                 this.Explanation.RaisePropertyChanged("Type");
                 this.SaveExplanation();
+            }
+        }
+
+        public int CurrentPage
+        {
+            get { return this.currentPage; }
+            set
+            {
+                this.currentPage = value;
+                base.OnPropertyChanged("CurrentPage");
+                this.LoadSnippets();
             }
         }
 
@@ -320,9 +331,9 @@ namespace QuranAuthor.ViewModels
 
         public void SnippetTaken(Snippet snippet, Bitmap page)
         {
-            if (snippet.ChapterId != this.Chapter.Id)
+            if (snippet.ChapterId != this.Chapter.Id || snippet.Page != this.CurrentPage)
             {
-                MessageBoxHelper.Show("The snippet belong to different chapter.");
+                MessageBoxHelper.Show("The snippet belong to different Chapter/Page.");
                 return;
             }
 
@@ -388,7 +399,7 @@ namespace QuranAuthor.ViewModels
         private void LoadSnippets()
         {
             this.Snippets.Clear();
-            var snippets = this.snippetRepository.GetSnippets(this.chapter.Id);
+            var snippets = this.snippetRepository.GetSnippets(this.chapter.Id, this.CurrentPage);
             snippets.ForEach(S => this.Snippets.Add(S));
         }
 

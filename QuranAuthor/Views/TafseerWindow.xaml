@@ -25,12 +25,13 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal">
-                <Button Click="NewSnippet_Click" Width="60" Margin="0,0,10,0" Content="جديد"/>
-                <Button Command="{Binding DeleteCommand}" Width="60" Margin="0,0,10,0" Content="حذف"/>
-                <Button Command="{Binding UpCommand}" Width="60" Margin="0,0,10,0" Content="فوق"/>
-                <Button Command="{Binding DownCommand}" Width="60" Margin="0,0,10,0" Content="تحت"/>
+                <Button Click="NewSnippet_Click" Width="50" Margin="0,0,5,0" Content="جديد"/>
+                <Button Command="{Binding DeleteCommand}" Width="50" Margin="0,0,5,0" Content="حذف"/>
+                <Button Command="{Binding UpCommand}" Width="50" Margin="0,0,5,0" Content="فوق"/>
+                <Button Command="{Binding DownCommand}" Width="50" Margin="0,0,5,0" Content="تحت"/>
+                <Controls:Numeric x:Name="numPage" Step="1" />
             </StackPanel>
-            <ComboBox ItemsSource="{Binding Chapters}" DisplayMemberPath="Name" SelectedItem="{Binding Chapter}" HorizontalAlignment="Right" Width="150" />
+            <ComboBox ItemsSource="{Binding Chapters}" DisplayMemberPath="Name" SelectedItem="{Binding Chapter}" HorizontalAlignment="Right" Width="120" />
             <ListBox ItemsSource="{Binding Snippets}" SelectedItem="{Binding Snippet}" Grid.Row="1" Margin="0,10,0,0" FontFamily="Traditional Arabic" FontSize="24" />
         </Grid>
         <Button Grid.Column="1" Command="{Binding SwitchModeCommand}" Content="&lt;&gt;" Height="50" Visibility="{Binding HasSnippet, Converter={StaticResource BoolToVisConverter}}" />
