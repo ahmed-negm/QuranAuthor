@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,11 +8,30 @@ using System.Windows;
 
 namespace QuranAuthor.Helps
 {
-    public static class MessageBoxHelper
+    public static class UIHelper
     {
-        public static void Show(string message)
+        public static void MessageBox(string message)
         {
-            MessageBox.Show(message);
+            System.Windows.MessageBox.Show(message);
+        }
+
+        public static void SaveToFile(string content)
+        {
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.FileName = "Document"; // Default file name
+            dlg.DefaultExt = ".text"; // Default file extension
+            dlg.Filter = "Text documents (.txt)|*.txt"; // Filter files by extension
+
+            // Show save file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == true)
+            {
+                // Save document
+                string filename = dlg.FileName;
+                File.WriteAllText(filename, content);
+            }
         }
     }
 }

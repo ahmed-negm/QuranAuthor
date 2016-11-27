@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
+using System.Web.Script.Serialization;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -46,7 +47,9 @@ namespace QuranAuthor.ViewModels
         private DelegateCommand downExpCommand;
         private DelegateCommand newExpCommand;
         private DelegateCommand switchModeCommand;
-
+        private DelegateCommand exportExpCommand;
+        private DelegateCommand importExpCommand;
+        
         #endregion
 
         #region Constructor
@@ -145,6 +148,7 @@ namespace QuranAuthor.ViewModels
                 this.explanationType = value;
                 base.OnPropertyChanged("ExplanationType");
                 this.Explanation.Type = (ExplanationType)value;
+                this.HasIcon = this.explanation.Type != Models.ExplanationType.Explain;
                 this.Explanation.RaisePropertyChanged("Type");
                 this.SaveExplanation();
             }
@@ -325,6 +329,30 @@ namespace QuranAuthor.ViewModels
             }
         }
 
+        public ICommand ExportExpCommand
+        {
+            get
+            {
+                if (exportExpCommand == null)
+                {
+                    exportExpCommand = new DelegateCommand(ExportExplanation, CanExportExplanation);
+                }
+                return exportExpCommand;
+            }
+        }
+
+        public ICommand ImportExpCommand
+        {
+            get
+            {
+                if (importExpCommand == null)
+                {
+                    importExpCommand = new DelegateCommand(ImportExplanation, CanImportExplanation);
+                }
+                return importExpCommand;
+            }
+        }
+
         #endregion
 
         #region Public Methods
@@ -333,7 +361,7 @@ namespace QuranAuthor.ViewModels
         {
             if (snippet.ChapterId != this.Chapter.Id || snippet.Page != this.CurrentPage)
             {
-                MessageBoxHelper.Show("The snippet belong to different Chapter/Page.");
+                UIHelper.MessageBox("The snippet belong to different Chapter/Page.");
                 return;
             }
 
@@ -356,7 +384,7 @@ namespace QuranAuthor.ViewModels
 
         #endregion
 
-        #region Private Methods
+        #region Command Methods
 
         private bool CanDeleteSnippet()
         {
@@ -395,13 +423,6 @@ namespace QuranAuthor.ViewModels
             this.snippetRepository.Swap(this.Snippet, this.Snippets[index + 1]);
             LoadSnippets();
             this.Snippet = this.Snippets[index + 1];
-        }
-
-        private void LoadSnippets()
-        {
-            this.Snippets.Clear();
-            var snippets = this.snippetRepository.GetSnippets(this.chapter.Id, this.CurrentPage);
-            snippets.ForEach(S => this.Snippets.Add(S));
         }
 
         private bool CanDeleteExplanation()
@@ -468,6 +489,47 @@ namespace QuranAuthor.ViewModels
             this.Explanation = this.Explanations[this.Explanations.Count - 1];
         }
 
+        private bool CanSwitchMode()
+        {
+            return this.snippet != null;
+        }
+
+        private void SwitchMode()
+        {
+            this.IsEditMode = !this.IsEditMode;
+            if (!this.IsEditMode)
+            {
+                this.Page = BitmapHelper.LoadPage(this.Snippet.Page);
+                this.Page = BitmapHelper.FocusSelection(this.Page, this.Snippet);
+                DrawExplanation();
+            }
+        }
+
+        private bool CanExportExplanation()
+        {
+            return this.Snippet != null && this.Explanations.Count > 0;
+        }
+
+        private void ExportExplanation()
+        {
+            var json = new JavaScriptSerializer().Serialize(this.Explanations);
+            UIHelper.SaveToFile(json);
+        }
+
+        private bool CanImportExplanation()
+        {
+            return this.Snippet != null;
+        }
+
+        private void ImportExplanation()
+        {
+
+        }
+
+        #endregion
+
+        #region Private Methods
+
         private void LoadExplanations()
         {
             this.HasSnippet = this.Snippet != null;
@@ -509,26 +571,17 @@ namespace QuranAuthor.ViewModels
             }
         }
 
-        private bool CanSwitchMode()
-        {
-            return this.snippet != null;
-        }
-
-        private void SwitchMode()
-        {
-            this.IsEditMode = !this.IsEditMode;
-            if (!this.IsEditMode)
-            {
-                this.Page = BitmapHelper.LoadPage(this.Snippet.Page);
-                this.Page = BitmapHelper.FocusSelection(this.Page, this.Snippet);
-                DrawExplanation();
-            }
-        }
-
         private void DrawExplanation()
         {
             Bitmap expPage = BitmapHelper.DrawExplanation((Bitmap)this.Page.Clone(), this.Explanations);
             this.ImageSource = BitmapHelper.BitmapToImageSource(expPage);
+        }
+
+        private void LoadSnippets()
+        {
+            this.Snippets.Clear();
+            var snippets = this.snippetRepository.GetSnippets(this.chapter.Id, this.CurrentPage);
+            snippets.ForEach(S => this.Snippets.Add(S));
         }
 
         #endregion

@@ -31,7 +31,6 @@
             <ComboBox ItemsSource="{Binding Chapters}" DisplayMemberPath="Name" SelectedItem="{Binding Chapter}" HorizontalAlignment="Right" Width="120" />
             <ListBox ItemsSource="{Binding Snippets}" SelectedItem="{Binding Snippet}" Grid.Row="1" Margin="0,10,0,0" FontFamily="Traditional Arabic" FontSize="24" />
         </Grid>
-        <!--<Button Grid.Column="1" Command="{Binding SwitchModeCommand}" Content="&lt;&gt;" Height="50" Visibility="{Binding HasSnippet, Converter={StaticResource BoolToVisConverter}}" />-->
         <Grid Grid.Column="1" Margin="10" Visibility="{Binding HasSnippet, Converter={StaticResource BoolToVisConverter} }">
             <Grid.RowDefinitions>
                 <RowDefinition Height="35"/>
@@ -43,7 +42,9 @@
                 <Button Width="60" Margin="0,0,10,0" Content="جديد" Click="NewExp_Click"/>
                 <Button Command="{Binding DeleteExpCommand}" Width="60" Margin="0,0,10,0" Content="حذف"/>
                 <Button Command="{Binding UpExpCommand}" Width="60" Margin="0,0,10,0" Content="فوق"/>
-                <Button Command="{Binding DownExpCommand}" Width="60" Content="تحت"/>
+                <Button Command="{Binding DownExpCommand}" Width="60" Margin="0,0,10,0" Content="تحت"/>
+                <Button Command="{Binding ExportExpCommand}" Width="60" Margin="0,0,10,0" Content="تصدير"/>
+                <Button Command="{Binding ImportExpCommand}" Width="60" Content="إستيراد"/>
             </StackPanel>
             <ListBox ItemsSource="{Binding Explanations}" SelectedItem="{Binding Explanation}" Grid.Row="1" Margin="0,10,0,0">
                 <ListBox.ItemTemplate>
@@ -64,11 +65,11 @@
                     <ComboBoxItem>هداية</ComboBoxItem>
                 </ComboBox>
                 <Controls:Numeric Grid.Column="1" x:Name="numExpTop" Step="20" HorizontalAlignment="Center" />
-                <ComboBox Grid.Column="2" VerticalAlignment="Center" ItemsSource="{Binding Icons}" SelectedIndex="{Binding IconIndex}"  />
+                <ComboBox Grid.Column="2" VerticalAlignment="Center" ItemsSource="{Binding Icons}" SelectedIndex="{Binding IconIndex}" Margin="5" Visibility="{Binding HasIcon, Converter={StaticResource BoolToVisConverter}}" />
             </Grid>
             <TextBox x:Name="txtExp" Text="{Binding ExplanationText}" Grid.Row="3" Padding="10" AcceptsReturn="True" FlowDirection="RightToLeft" TextWrapping="Wrap" Visibility="{Binding HasExplanation, Converter={StaticResource BoolToVisConverter}}" />
         </Grid>
-        <Grid Grid.Column="2" Background="White">
+        <Grid Grid.Column="2" Visibility="{Binding HasSnippet, Converter={StaticResource BoolToVisConverter}}">
             <Image Source="{Binding ImageSource}" />
         </Grid>
     </Grid>

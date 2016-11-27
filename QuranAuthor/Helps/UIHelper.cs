@@ -149,7 +149,7 @@ namespace QuranAuthor.Helps
                 var pen = explanation.Type == ExplanationType.Explain ? explainBorderPen : explanation.Type == ExplanationType.Note ? noteBorderPen : guideBorderPen;
                 var brush = explanation.Type == ExplanationType.Explain ? explainBrush : explanation.Type == ExplanationType.Note ? noteBrush : guideBrush;
                 var width = 916;
-                if (explanation.Icon > 0)
+                if (explanation.Icon > 0 && explanation.Type != ExplanationType.Explain)
                 {
                     width -= 50;
                 }
