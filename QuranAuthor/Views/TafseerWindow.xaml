@@ -4,7 +4,7 @@
         xmlns:Controls="clr-namespace:QuranAuthor.Controls"
         xmlns:Converters="clr-namespace:QuranAuthor.Converters"
         x:Class="QuranAuthor.Views.TafseerWindow"
-        Title="Tafseer"  Width="1024" Height="768" FlowDirection="RightToLeft" WindowStartupLocation="CenterScreen"
+        Title="Tafseer"  Width="1360" Height="740" FlowDirection="RightToLeft" WindowStartupLocation="CenterScreen" WindowState="Maximized"
         FontSize="20" FontFamily="GE SS Text Light" Closed="Window_Closed">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
@@ -13,13 +13,10 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="25"/>
-            <ColumnDefinition Width="525"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid  Grid.Column="0" Background="White">
-            <Image Source="{Binding ImageSource}" />
-        </Grid>
-        <Grid Grid.Column="0" Background="White" Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisConverter}}" Margin="10">
+        <Grid Grid.Column="0" Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="35"/>
                 <RowDefinition Height="*"/>
@@ -34,15 +31,15 @@
             <ComboBox ItemsSource="{Binding Chapters}" DisplayMemberPath="Name" SelectedItem="{Binding Chapter}" HorizontalAlignment="Right" Width="120" />
             <ListBox ItemsSource="{Binding Snippets}" SelectedItem="{Binding Snippet}" Grid.Row="1" Margin="0,10,0,0" FontFamily="Traditional Arabic" FontSize="24" />
         </Grid>
-        <Button Grid.Column="1" Command="{Binding SwitchModeCommand}" Content="&lt;&gt;" Height="50" Visibility="{Binding HasSnippet, Converter={StaticResource BoolToVisConverter}}" />
-        <Grid Grid.Column="2" Margin="10" Visibility="{Binding HasSnippet, Converter={StaticResource BoolToVisConverter} }">
+        <!--<Button Grid.Column="1" Command="{Binding SwitchModeCommand}" Content="&lt;&gt;" Height="50" Visibility="{Binding HasSnippet, Converter={StaticResource BoolToVisConverter}}" />-->
+        <Grid Grid.Column="1" Margin="10" Visibility="{Binding HasSnippet, Converter={StaticResource BoolToVisConverter} }">
             <Grid.RowDefinitions>
                 <RowDefinition Height="35"/>
                 <RowDefinition Height="150"/>
                 <RowDefinition Height="45"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                 <Button Width="60" Margin="0,0,10,0" Content="جديد" Click="NewExp_Click"/>
                 <Button Command="{Binding DeleteExpCommand}" Width="60" Margin="0,0,10,0" Content="حذف"/>
                 <Button Command="{Binding UpExpCommand}" Width="60" Margin="0,0,10,0" Content="فوق"/>
@@ -55,19 +52,24 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-
-            <ComboBox Grid.Row="2" SelectedIndex="{Binding ExplanationType}" HorizontalAlignment="Right" Margin="5" Width="100" Visibility="{Binding HasExplanation, Converter={StaticResource BoolToVisConverter}}" >
-                <ComboBoxItem>شرح</ComboBoxItem>
-                <ComboBoxItem>ملحوظة</ComboBoxItem>
-                <ComboBoxItem>هداية</ComboBoxItem>
-            </ComboBox>
-            <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Left" Visibility="{Binding HasExplanation, Converter={StaticResource BoolToVisConverter}}" >
-                <Label  VerticalAlignment="Center" Content="الإحداثي:"/>
-                <Controls:Numeric x:Name="numExpTop" Step="20" />
-                <Label VerticalAlignment="Center" Content="     أيقونة:" Visibility="{Binding HasIcon, Converter={StaticResource BoolToVisConverter}}"/>
-                <ComboBox VerticalAlignment="Center" ItemsSource="{Binding Icons}" SelectedIndex="{Binding IconIndex}"  Width="90" FontSize="16" Visibility="{Binding HasIcon, Converter={StaticResource BoolToVisConverter}}" />
-            </StackPanel>
+            <Grid Grid.Row="2" Visibility="{Binding HasExplanation, Converter={StaticResource BoolToVisConverter}}" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox Grid.Column="0" SelectedIndex="{Binding ExplanationType}" Margin="5" >
+                    <ComboBoxItem>شرح</ComboBoxItem>
+                    <ComboBoxItem>ملحوظة</ComboBoxItem>
+                    <ComboBoxItem>هداية</ComboBoxItem>
+                </ComboBox>
+                <Controls:Numeric Grid.Column="1" x:Name="numExpTop" Step="20" HorizontalAlignment="Center" />
+                <ComboBox Grid.Column="2" VerticalAlignment="Center" ItemsSource="{Binding Icons}" SelectedIndex="{Binding IconIndex}"  />
+            </Grid>
             <TextBox x:Name="txtExp" Text="{Binding ExplanationText}" Grid.Row="3" Padding="10" AcceptsReturn="True" FlowDirection="RightToLeft" TextWrapping="Wrap" Visibility="{Binding HasExplanation, Converter={StaticResource BoolToVisConverter}}" />
+        </Grid>
+        <Grid Grid.Column="2" Background="White">
+            <Image Source="{Binding ImageSource}" />
         </Grid>
     </Grid>
 </Window>

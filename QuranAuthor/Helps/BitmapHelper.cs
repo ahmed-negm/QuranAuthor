@@ -329,7 +329,7 @@ namespace QuranAuthor.Helps
                 {
                     if (text[i] == ' ')
                     {
-                        if ((i - wordStart) > 1)
+                        if ((i - wordStart) > 0)
                         {
                             ranges.Add(new CharacterRange(wordStart, i - wordStart));
                         }
@@ -395,7 +395,7 @@ namespace QuranAuthor.Helps
 
         private static RectangleF AdjustRegionRect(RectangleF rect)
         {
-            return new RectangleF(rect.Left - 12, rect.Top - 1, rect.Width + 20, rect.Height);
+            return new RectangleF(rect.Left - 15, rect.Top - 1, rect.Width + 24, rect.Height);
         }
     }
 }

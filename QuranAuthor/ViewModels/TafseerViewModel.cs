@@ -476,6 +476,9 @@ namespace QuranAuthor.ViewModels
                 this.Explanations.Clear();
                 var explanations = this.explanationRepository.GetExplanations(this.Snippet.Id);
                 explanations.ForEach(S => this.Explanations.Add(S));
+                this.Page = BitmapHelper.LoadPage(this.Snippet.Page);
+                this.Page = BitmapHelper.FocusSelection(this.Page, this.Snippet);
+                DrawExplanation();
             }
         }
 
