@@ -1,14 +1,14 @@
 ﻿using QuranAuthor.Models;
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Media.Imaging;
-using System.IO;
-using System.Drawing.Imaging;
 using System.Configuration;
+using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Drawing.Text;
+using System.IO;
+using System.Linq;
+using System.Windows.Media.Imaging;
 
 namespace QuranAuthor.Helps
 {
@@ -23,6 +23,7 @@ namespace QuranAuthor.Helps
         private static Brush explainBrush = new SolidBrush(Color.FromArgb(255, 0, 112, 192));
         private static Brush noteBrush = new SolidBrush(Color.Black);
         private static Brush guideBrush = new SolidBrush(Color.FromArgb(255, 255, 165, 0));
+        private static Brush focusBrush = new SolidBrush(Color.FromArgb(255, 132, 60, 12));
         private static Font font36 = new Font("GE SS Text Light", 36);
         private static Font font30 = new Font("GE SS Text Light", 30);
         private static StringFormat rightToLeftStringFormat = new StringFormat(StringFormatFlags.DirectionRightToLeft);
@@ -147,8 +148,13 @@ namespace QuranAuthor.Helps
                 var font = explanation.Type == ExplanationType.Explain ? font36 : font30;
                 var pen = explanation.Type == ExplanationType.Explain ? explainBorderPen : explanation.Type == ExplanationType.Note ? noteBorderPen : guideBorderPen;
                 var brush = explanation.Type == ExplanationType.Explain ? explainBrush : explanation.Type == ExplanationType.Note ? noteBrush : guideBrush;
-                var height = (int)g.MeasureString(explanation.Text, font, new SizeF(916, 1000), rightToLeftStringFormat).Height;
                 var width = 916;
+                if (explanation.Icon > 0)
+                {
+                    width -= 50;
+                }
+
+                var height = (int)g.MeasureString(explanation.Text, font, new SizeF(width, 1000), rightToLeftStringFormat).Height;
 
                 if (explanation.Type == ExplanationType.Explain)
                 {
@@ -162,17 +168,13 @@ namespace QuranAuthor.Helps
                     if (explanation.Icon > 0)
                     {
                         g.DrawImage(GetIcon(explanation.Type, explanation.Icon), new Point(940, explanation.Top + 8));
-                        width -= 50;
                     }
                 }
 
-                g.DrawString(explanation.Text, font, brush, new RectangleF(71, explanation.Top + 12, width, height), rightToLeftStringFormat);
+                DrawString(g, explanation, font, brush, height, width);
             }
 
-            //MeasureCharacterRangesRegions(g);
-
             g.Flush();
-
             return bitmap;
         }
 
@@ -313,51 +315,82 @@ namespace QuranAuthor.Helps
             }
         }
 
-        private static void MeasureCharacterRangesRegions(Graphics g)
+        private static List<CharacterRange> Sansitize(ref string text)
         {
+            var ranges = new List<CharacterRange>();
+            var start = text.IndexOf("**");
+            var end = text.IndexOf("**", start + 1);
+            while (start > -1 && end > -1)
+            {
+                text = text.Substring(0, start) + text.Substring(start + 2, end - start - 2) + text.Substring(end + 2);
 
-            // Set up string.
-            string measureString = "أحمد حسن سيد نجم يلعب الكرة فى نادي الجيش";
-            Font stringFont = new Font("GE SS Text Light", 36);
+                var wordStart = start;
+                for (int i = start; i < end - 2; i++)
+                {
+                    if (text[i] == ' ')
+                    {
+                        if ((i - wordStart) > 1)
+                        {
+                            ranges.Add(new CharacterRange(wordStart, i - wordStart));
+                        }
+                        wordStart = i + 1;
+                    }
+                }
 
-            // Set character ranges to "First" and "Second".
-            CharacterRange[] characterRanges = { new CharacterRange(5, 3), new CharacterRange(31, 4) };
+                ranges.Add(new CharacterRange(wordStart, end - wordStart - 2));
 
-            // Create rectangle for layout.
-            float x = 50.0F;
-            float y = 50.0F;
-            float width = 500.0F;
-            float height = 300.0F;
-            RectangleF layoutRect = new RectangleF(x, y, width, height);
+                if (end + 1 >= text.Length)
+                {
+                    break;
+                }
+                start = text.IndexOf("**", end + 1);
+                end = text.IndexOf("**", start + 1);
+            }
+            return ranges;
+        }
 
-            g.FillRectangle(Brushes.White, Rectangle.Round(layoutRect));
-            //g.DrawRectangle(new Pen(Color.Red, 2), Rectangle.Round(layoutRect));
+        private static string Range(string text, CharacterRange charRange)
+        {
+            return text.Substring(charRange.First, charRange.Length);
+        }
 
-            // Set string format.
-            StringFormat stringFormat = new StringFormat();
+        private static void DrawString(Graphics g, Explanation explanation, Font font, Brush brush, int height, int width)
+        {
+            var text = explanation.Text;
+            var ranges = Sansitize(ref text);
+            var textRect = new RectangleF(71, explanation.Top + 12, width, height);
+
+            g.DrawString(text, font, brush, textRect, rightToLeftStringFormat);
+
+
+            CharacterRange[][] chunks = ranges
+                    .Select((s, i) => new { Value = s, Index = i })
+                    .GroupBy(x => x.Index / 30)
+                    .Select(grp => grp.Select(x => x.Value).ToArray())
+                    .ToArray();
+
+            foreach (var chunk in chunks)
+            {
+                textRect = DrawBold(g, font, text, chunk, textRect);
+            }
+        }
+
+        private static RectangleF DrawBold(Graphics g, Font font, string text, CharacterRange[] chunk, RectangleF textRect)
+        {
+            var stringFormat = new StringFormat();
             stringFormat.FormatFlags = StringFormatFlags.DirectionRightToLeft;
-            stringFormat.SetMeasurableCharacterRanges(characterRanges);
+            stringFormat.SetMeasurableCharacterRanges(chunk);
 
-            // Draw string to screen.
-            g.DrawString(measureString, stringFont, Brushes.Black, layoutRect, stringFormat);
+            var regions = g.MeasureCharacterRanges(text, font, textRect, stringFormat);
 
-            // Measure two ranges in string.
-            Region[] stringRegions = g.MeasureCharacterRanges(measureString, stringFont, layoutRect, stringFormat);
-
-            // Draw rectangle for first measured range.
-            RectangleF measureRect1 = stringRegions[0].GetBounds(g);
-            g.DrawRectangle(new Pen(Color.White, 2), Rectangle.Round(measureRect1));
-            g.FillRectangle(Brushes.White, Rectangle.Round(measureRect1));
-
-            // Draw rectangle for second measured range.
-            RectangleF measureRect2 = stringRegions[1].GetBounds(g);
-            g.DrawRectangle(new Pen(Color.White, 2), Rectangle.Round(measureRect2));
-            g.FillRectangle(Brushes.White, Rectangle.Round(measureRect2));
-
-
-            g.DrawString("حسن", stringFont, Brushes.Orange, AdjustRegionRect(measureRect1), stringFormat);
-
-            g.DrawString("نادي", stringFont, Brushes.Orange, AdjustRegionRect(measureRect2), stringFormat);
+            for (int i = 0; i < regions.Length; i++)
+            {
+                var rect = regions[i].GetBounds(g);
+                g.DrawRectangle(new Pen(Color.White, 2), Rectangle.Round(rect));
+                g.FillRectangle(Brushes.White, Rectangle.Round(rect));
+                g.DrawString(Range(text, chunk[i]), font, focusBrush, AdjustRegionRect(rect), stringFormat);
+            }
+            return textRect;
         }
 
         private static RectangleF AdjustRegionRect(RectangleF rect)
