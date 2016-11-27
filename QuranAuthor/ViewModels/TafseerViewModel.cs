@@ -2,13 +2,13 @@
 using QuranAuthor.Helps;
 using QuranAuthor.Models;
 using QuranAuthor.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Linq;
-using System;
 
 namespace QuranAuthor.ViewModels
 {
@@ -46,7 +46,7 @@ namespace QuranAuthor.ViewModels
         private DelegateCommand downExpCommand;
         private DelegateCommand newExpCommand;
         private DelegateCommand switchModeCommand;
-        
+
         #endregion
 
         #region Constructor
@@ -324,7 +324,7 @@ namespace QuranAuthor.ViewModels
                 return switchModeCommand;
             }
         }
-        
+
         #endregion
 
         #region Public Methods
@@ -351,6 +351,7 @@ namespace QuranAuthor.ViewModels
             }
 
             this.explanationRepository.Update(this.Explanation);
+            this.DrawExplanation();
         }
 
         #endregion
@@ -481,14 +482,14 @@ namespace QuranAuthor.ViewModels
         private void LoadExplanation()
         {
             this.HasExplanation = this.Explanation != null;
-            if(this.HasExplanation)
+            if (this.HasExplanation)
             {
                 this.suspendExplanationEvents = true;
                 this.ExplanationType = (int)this.Explanation.Type;
                 this.ExplanationTop = this.Explanation.Top;
                 this.ExplanationText = this.Explanation.Text;
                 this.HasIcon = this.explanation.Type != Models.ExplanationType.Explain;
-                if(this.HasIcon)
+                if (this.HasIcon)
                 {
                     this.Icons.Clear();
                     if (this.explanation.Type == Models.ExplanationType.Note)
@@ -513,14 +514,18 @@ namespace QuranAuthor.ViewModels
         private void SwitchMode()
         {
             this.IsEditMode = !this.IsEditMode;
-            if(!this.IsEditMode)
+            if (!this.IsEditMode)
             {
                 this.Page = BitmapHelper.LoadPage(this.Snippet.Page);
                 this.Page = BitmapHelper.FocusSelection(this.Page, this.Snippet);
-                Bitmap expPage = BitmapHelper.DrawExplanation((Bitmap)this.Page.Clone(), this.Explanations);
-                expPage.Save("E:\\1.png");
-                this.ImageSource = BitmapHelper.BitmapToImageSource(expPage);
+                DrawExplanation();
             }
+        }
+
+        private void DrawExplanation()
+        {
+            Bitmap expPage = BitmapHelper.DrawExplanation((Bitmap)this.Page.Clone(), this.Explanations);
+            this.ImageSource = BitmapHelper.BitmapToImageSource(expPage);
         }
 
         #endregion
