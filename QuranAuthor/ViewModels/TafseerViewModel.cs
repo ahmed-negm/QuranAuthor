@@ -523,7 +523,29 @@ namespace QuranAuthor.ViewModels
 
         private void ImportExplanation()
         {
+            var json = UIHelper.OpenFile();
+            if(!string.IsNullOrEmpty(json))
+            {
+                try
+                {
+                    var newExplanations = new JavaScriptSerializer().Deserialize<IList<Explanation>>(json);
+                    foreach (var newExp in newExplanations)
+                    {
+                        var newExplanation = new Explanation();
+                        newExplanation.SnippetId = this.Snippet.Id;
+                        newExplanation.Type = newExp.Type;
+                        newExplanation.Top = newExp.Top;
+                        newExplanation.Text = newExp.Text;
+                        this.explanationRepository.AddExplanation(newExplanation);
+                    }
 
+                    this.LoadExplanations();
+                }
+                catch (Exception ex)
+                {
+                    UIHelper.MessageBox("Can't Import file: " + ex.Message);
+                }
+            }
         }
 
         #endregion
