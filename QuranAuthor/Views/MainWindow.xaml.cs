@@ -8,5 +8,17 @@ namespace QuranAuthor.Views
         {
             InitializeComponent();
         }
+
+        private void TafseerEnter_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new TafseerWindow();
+            window.ShowDialog();
+        }
+
+        private void TafseerGen_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new GenTafseerWindow();
+            window.ShowDialog();
+        }
     }
 }

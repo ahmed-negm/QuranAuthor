@@ -20,8 +20,6 @@ namespace QuranAuthor.Views
             this.ViewModel.Chapter = this.ViewModel.Chapters[38];
         }
 
-        
-
         public TafseerViewModel ViewModel
         {
             get

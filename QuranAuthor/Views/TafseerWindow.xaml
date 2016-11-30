@@ -4,7 +4,7 @@
         xmlns:Controls="clr-namespace:QuranAuthor.Controls"
         xmlns:Converters="clr-namespace:QuranAuthor.Converters"
         x:Class="QuranAuthor.Views.TafseerWindow"
-        Title="Tafseer"  Width="1360" Height="740" FlowDirection="RightToLeft" WindowStartupLocation="CenterScreen" WindowState="Maximized"
+        Title="Enter Tafseer"  Width="1360" Height="740" FlowDirection="RightToLeft" WindowStartupLocation="CenterScreen" WindowState="Maximized"
         FontSize="20" FontFamily="GE SS Text Light" Closed="Window_Closed">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
