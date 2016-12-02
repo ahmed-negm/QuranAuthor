@@ -1,5 +1,5 @@
-﻿using System.Data.SQLite;
-using System.Drawing;
+﻿using System;
+using System.Data.Common;
 
 namespace QuranAuthor.Models
 {
@@ -25,8 +25,9 @@ namespace QuranAuthor.Models
 
     public class Explanation : ModelBase
     {
-        public int Id { get; set; }
-        public int SnippetId { get; set; }
+        public string Id { get; set; }
+        public string SnippetId { get; set; }
+        public int Order { get; set; }
         public ExplanationType Type { get; set; }
         public int Top { get; set; }
         public int Icon { get; set; }
@@ -34,16 +35,18 @@ namespace QuranAuthor.Models
 
         public Explanation()
         {
+            this.Id = Guid.NewGuid().ToString();
         }
 
-        public Explanation(SQLiteDataReader reader)
+        public Explanation(DbDataReader reader)
         {
-            this.Id = reader.GetInt32(0);
-            this.SnippetId = reader.GetInt32(1);
-            this.Type = (ExplanationType)reader.GetInt32(2);
-            this.Top = reader.GetInt32(3);
-            this.Icon = reader.GetInt32(4);
-            this.Text = reader.GetString(5);
+            this.Id = reader.GetString(0);
+            this.SnippetId = reader.GetString(1);
+            this.Order = reader.GetInt32(2);
+            this.Type = (ExplanationType)reader.GetInt32(3);
+            this.Top = reader.GetInt32(4);
+            this.Icon = reader.GetInt32(5);
+            this.Text = reader.GetString(6);
         }
 
         public override string ToString()

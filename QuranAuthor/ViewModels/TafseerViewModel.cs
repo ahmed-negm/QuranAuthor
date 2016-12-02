@@ -5,6 +5,7 @@ using QuranAuthor.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Web.Script.Serialization;
@@ -46,7 +47,6 @@ namespace QuranAuthor.ViewModels
         private DelegateCommand upExpCommand;
         private DelegateCommand downExpCommand;
         private DelegateCommand newExpCommand;
-        private DelegateCommand switchModeCommand;
         private DelegateCommand exportExpCommand;
         private DelegateCommand importExpCommand;
         
@@ -84,7 +84,7 @@ namespace QuranAuthor.ViewModels
             {
                 this.snippet = value;
                 base.OnPropertyChanged("Snippet");
-                this.LoadExplanations();
+                this.LoadSnippet();
             }
         }
 
@@ -317,18 +317,6 @@ namespace QuranAuthor.ViewModels
             }
         }
 
-        public ICommand SwitchModeCommand
-        {
-            get
-            {
-                if (switchModeCommand == null)
-                {
-                    switchModeCommand = new DelegateCommand(SwitchMode, CanSwitchMode);
-                }
-                return switchModeCommand;
-            }
-        }
-
         public ICommand ExportExpCommand
         {
             get
@@ -366,6 +354,7 @@ namespace QuranAuthor.ViewModels
             }
 
             this.Page = page;
+            snippet.Order = this.Snippets.Count;
             this.snippetRepository.AddSnippet(snippet);
             this.LoadSnippets();
             this.Snippet = this.Snippets[this.Snippets.Count - 1];
@@ -484,25 +473,10 @@ namespace QuranAuthor.ViewModels
             newExplanation.Type = 0;
             newExplanation.Top = 0;
             newExplanation.Text = "-";
+            newExplanation.Order = this.Explanations.Count;
             this.explanationRepository.AddExplanation(newExplanation);
             this.LoadExplanations();
             this.Explanation = this.Explanations[this.Explanations.Count - 1];
-        }
-
-        private bool CanSwitchMode()
-        {
-            return this.snippet != null;
-        }
-
-        private void SwitchMode()
-        {
-            this.IsEditMode = !this.IsEditMode;
-            if (!this.IsEditMode)
-            {
-                this.Page = BitmapHelper.LoadPage(this.Snippet.Page);
-                this.Page = BitmapHelper.FocusSelection(this.Page, this.Snippet);
-                DrawExplanation();
-            }
         }
 
         private bool CanExportExplanation()
@@ -529,6 +503,7 @@ namespace QuranAuthor.ViewModels
                 try
                 {
                     var newExplanations = new JavaScriptSerializer().Deserialize<IList<Explanation>>(json);
+                    int order = this.Explanations.Count;
                     foreach (var newExp in newExplanations)
                     {
                         var newExplanation = new Explanation();
@@ -536,6 +511,8 @@ namespace QuranAuthor.ViewModels
                         newExplanation.Type = newExp.Type;
                         newExplanation.Top = newExp.Top;
                         newExplanation.Text = newExp.Text;
+                        newExplanation.Order = order;
+                        order++;
                         this.explanationRepository.AddExplanation(newExplanation);
                     }
 
@@ -552,18 +529,37 @@ namespace QuranAuthor.ViewModels
 
         #region Private Methods
 
-        private void LoadExplanations()
+        private void LoadSnippet()
         {
             this.HasSnippet = this.Snippet != null;
             if (this.HasSnippet)
             {
-                this.Explanations.Clear();
-                var explanations = this.explanationRepository.GetExplanations(this.Snippet.Id);
-                explanations.ForEach(S => this.Explanations.Add(S));
-                this.Page = BitmapHelper.LoadPage(this.Snippet.Page);
-                this.Page = BitmapHelper.FocusSelection(this.Page, this.Snippet);
-                DrawExplanation();
+                var worker = new BackgroundWorker();
+                worker.DoWork += worker_DoWork;
+                worker.RunWorkerCompleted += worker_RunWorkerCompleted;
+                this.HasSnippet = false;
+                worker.RunWorkerAsync();
             }
+        }
+
+        private void LoadExplanations()
+        {
+            this.Explanations.Clear();
+            var explanations = this.explanationRepository.GetExplanations(this.Snippet.Id);
+            explanations.ForEach(S => this.Explanations.Add(S));
+            this.DrawExplanation();
+        }
+
+        private void worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            this.Page = BitmapHelper.LoadPage(this.Snippet.Page);
+            this.Page = BitmapHelper.FocusSelection(this.Page, this.Snippet);
+        }
+
+        private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            this.LoadExplanations();
+            this.HasSnippet = true;
         }
 
         private void LoadExplanation()

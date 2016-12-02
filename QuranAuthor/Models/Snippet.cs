@@ -1,11 +1,13 @@
-﻿using System.Data.SQLite;
-using System.Drawing;
+﻿using System;
+using System.Data.Common;
 
 namespace QuranAuthor.Models
 {
     public class Snippet
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
+        public int Type { get; set; }
+        public int Order { get; set; }
         public int ChapterId { get; set; }
         public int Page { get; set; }
         public int StartVerse { get; set; }
@@ -16,24 +18,33 @@ namespace QuranAuthor.Models
         public int EndPoint { get; set; }
         public string Text { get; set; }
         public string Rtf { get; set; }
+        public string ParentId { get; set; }
 
         public Snippet()
         {
+            this.Id = Guid.NewGuid().ToString();
         }
 
-        public Snippet(SQLiteDataReader reader)
+        public Snippet(DbDataReader reader)
         {
-            this.Id = reader.GetInt32(0);
-            this.ChapterId = reader.GetInt32(1);
-            this.Page = reader.GetInt32(2);
-            this.StartVerse = reader.GetInt32(3);
-            this.EndVerse = reader.GetInt32(4);
-            this.StartLine = reader.GetInt32(5);
-            this.EndLine = reader.GetInt32(6);
-            this.StartPoint = reader.GetInt32(7);
-            this.EndPoint = reader.GetInt32(8);
-            this.Text = reader.GetString(9);
-            this.Rtf = reader.GetString(10);
+            this.Id = reader.GetString(0);
+            this.Type = reader.GetInt32(1);
+            this.Order = reader.GetInt32(2);
+            this.ChapterId = reader.GetInt32(3);
+            this.Page = reader.GetInt32(4);
+            this.StartVerse = reader.GetInt32(5);
+            this.EndVerse = reader.GetInt32(6);
+            this.StartLine = reader.GetInt32(7);
+            this.EndLine = reader.GetInt32(8);
+            this.StartPoint = reader.GetInt32(9);
+            this.EndPoint = reader.GetInt32(10);
+            this.Text = reader.GetString(11);
+            this.Rtf = reader.GetString(12);
+            try
+            {
+                this.ParentId = reader.GetString(13);
+            }
+            catch { }
         }
 
         public override string ToString()

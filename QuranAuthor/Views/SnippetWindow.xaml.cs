@@ -3,6 +3,7 @@ using QuranAuthor.Models;
 using QuranAuthor.Repositories;
 using QuranAuthor.Services;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -18,7 +19,6 @@ namespace QuranAuthor.Views
         private SnippetService snippetService = new SnippetService();
         private Bitmap originalPage;
         private bool suspendEvents = false;
-
         public Bitmap Page { get; set; }
         public Snippet Snippet { get; set; }
 
@@ -104,8 +104,29 @@ namespace QuranAuthor.Views
 
         private void RenderSelection()
         {
+            var worker = new BackgroundWorker();
+            worker.DoWork += worker_DoWork;
+            worker.RunWorkerCompleted += worker_RunWorkerCompleted;
+            numStart.IsEnabled = false;
+            numEnd.IsEnabled = false;
+            imgPage.Visibility = System.Windows.Visibility.Hidden;
+            worker.RunWorkerAsync();
+        }
+
+        private void worker_DoWork(object sender, DoWorkEventArgs e)
+        {
             this.Page = BitmapHelper.FocusSelection((Bitmap)originalPage.Clone(), Snippet);
-            imgPage.Source = BitmapHelper.BitmapToImageSource(this.Page);
+            this.Dispatcher.Invoke(() =>
+            {
+                imgPage.Source = BitmapHelper.BitmapToImageSource(this.Page);
+            });
+        }
+
+        private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            numStart.IsEnabled = true;
+            numEnd.IsEnabled = true;
+            imgPage.Visibility = System.Windows.Visibility.Visible;
         }
     }
 }
