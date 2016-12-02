@@ -1,0 +1,76 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Controls="clr-namespace:QuranAuthor.Controls"
+        xmlns:Converters="clr-namespace:QuranAuthor.Converters"
+        x:Class="QuranAuthor.Views.SimilarWindow"
+        Title="Enter Similars"  Width="1360" Height="740" FlowDirection="RightToLeft" WindowStartupLocation="CenterScreen" WindowState="Maximized"
+        FontSize="20" FontFamily="GE SS Text Light" Closed="Window_Closed">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+        <Converters:TypeToColorConverter x:Key="ColorConverter" />
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <Button Click="NewSnippet_Click" Width="50" Margin="0,0,5,0" Content="جديد"/>
+                <Button Command="{Binding DeleteCommand}" Width="50" Margin="0,0,5,0" Content="حذف"/>
+                <Button Command="{Binding UpCommand}" Width="50" Margin="0,0,5,0" Content="فوق"/>
+                <Button Command="{Binding DownCommand}" Width="50" Margin="0,0,5,0" Content="تحت"/>
+                <Controls:Numeric x:Name="numPage" Step="1" />
+            </StackPanel>
+            <ComboBox ItemsSource="{Binding Chapters}" DisplayMemberPath="Name" SelectedItem="{Binding Chapter}" HorizontalAlignment="Right" Width="120" />
+            <ListBox ItemsSource="{Binding Snippets}" SelectedItem="{Binding Snippet}" Grid.Row="1" Margin="0,10,0,0" FontFamily="Traditional Arabic" FontSize="24" />
+        </Grid>
+        <Grid Grid.Column="1" Margin="10" Visibility="{Binding HasSnippet, Converter={StaticResource BoolToVisConverter} }">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="150"/>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <Button Width="60" Margin="0,0,10,0" Content="جديد" Click="NewExp_Click"/>
+                <Button Command="{Binding DeleteExpCommand}" Width="60" Margin="0,0,10,0" Content="حذف"/>
+                <Button Command="{Binding UpExpCommand}" Width="60" Margin="0,0,10,0" Content="فوق"/>
+                <Button Command="{Binding DownExpCommand}" Width="60" Margin="0,0,10,0" Content="تحت"/>
+                <Button Command="{Binding ExportExpCommand}" Width="60" Margin="0,0,10,0" Content="تصدير"/>
+                <Button Command="{Binding ImportExpCommand}" Width="60" Content="إستيراد"/>
+            </StackPanel>
+            <ListBox ItemsSource="{Binding Explanations}" SelectedItem="{Binding Explanation}" Grid.Row="1" Margin="0,10,0,0">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Text}" Foreground="{Binding Path=Type, Converter={StaticResource ColorConverter}}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <Grid Grid.Row="2" Visibility="{Binding HasExplanation, Converter={StaticResource BoolToVisConverter}}" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox Grid.Column="0" SelectedIndex="{Binding ExplanationType}" Margin="5" >
+                    <ComboBoxItem>شرح</ComboBoxItem>
+                    <ComboBoxItem>ملحوظة</ComboBoxItem>
+                    <ComboBoxItem>هداية</ComboBoxItem>
+                </ComboBox>
+                <Controls:Numeric Grid.Column="1" x:Name="numExpTop" Step="20" HorizontalAlignment="Center" />
+                <ComboBox Grid.Column="2" VerticalAlignment="Center" ItemsSource="{Binding Icons}" SelectedIndex="{Binding IconIndex}" Margin="5" Visibility="{Binding HasIcon, Converter={StaticResource BoolToVisConverter}}" />
+            </Grid>
+            <TextBox x:Name="txtExp" Text="{Binding ExplanationText}" Grid.Row="3" Padding="10" AcceptsReturn="True" FlowDirection="RightToLeft" TextWrapping="Wrap" Visibility="{Binding HasExplanation, Converter={StaticResource BoolToVisConverter}}" />
+        </Grid>
+        <Grid Grid.Column="2" Visibility="{Binding HasSnippet, Converter={StaticResource BoolToVisConverter}}">
+            <Image Source="{Binding ImageSource}" />
+        </Grid>
+    </Grid>
+</Window>

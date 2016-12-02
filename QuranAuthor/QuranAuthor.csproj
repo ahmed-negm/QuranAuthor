@@ -76,6 +76,7 @@
     <Compile Include="Repositories\ChapterRepository.cs" />
     <Compile Include="Services\SnippetService.cs" />
     <Compile Include="ViewModels\GenTafseerViewModel.cs" />
+    <Compile Include="ViewModels\SimilarViewModel.cs" />
     <Compile Include="Views\GenTafseerWindow.xaml.cs">
       <DependentUpon>GenTafseerWindow.xaml</DependentUpon>
     </Compile>
@@ -84,6 +85,9 @@
     </Compile>
     <Compile Include="ViewModels\TafseerViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\SimilarWindow.xaml.cs">
+      <DependentUpon>SimilarWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TafseerWindow.xaml.cs">
       <DependentUpon>TafseerWindow.xaml</DependentUpon>
     </Compile>
@@ -115,6 +119,10 @@
     <Page Include="Views\SnippetWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SimilarWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\TafseerWindow.xaml">
       <SubType>Designer</SubType>

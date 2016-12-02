@@ -5,9 +5,16 @@
         FontSize="20" FontFamily="GE SS Text Light">
     <DockPanel>
         <Menu DockPanel.Dock="Top" TextBlock.FontSize="24" TextBlock.FontFamily="GE SS Text Light">
+            <MenuItem Header="رئيسية">
+                <MenuItem Header="خروج" Click="Exit_Click" />
+            </MenuItem>
             <MenuItem Header="تفسير">
                 <MenuItem Header="إدخال" Click="TafseerEnter_Click" />
                 <MenuItem Header="تخريج" Click="TafseerGen_Click" />
+            </MenuItem>
+            <MenuItem Header="متشابهات">
+                <MenuItem Header="إدخال" Click="SimilarEnter_Click" />
+                <MenuItem Header="تخريج" Click="SimilarGen_Click" />
             </MenuItem>
         </Menu>
         <TextBox AcceptsReturn="True" />

@@ -20,5 +20,20 @@ namespace QuranAuthor.Views
             var window = new GenTafseerWindow();
             window.ShowDialog();
         }
+
+        private void SimilarEnter_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new SimilarWindow();
+            window.ShowDialog();
+        }
+
+        private void SimilarGen_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }
