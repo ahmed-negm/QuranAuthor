@@ -17,7 +17,7 @@ namespace QuranAuthor.ViewModels
     public class GenTafseerViewModel : ViewModelBase
     {
         private ChapterRepository chapterRepository = new ChapterRepository();
-        private SnippetRepository snippetRepository = new SnippetRepository();
+        private ExplanationSnippetsRepository snippetRepository = new ExplanationSnippetsRepository();
         private ExplanationRepository explanationRepository = new ExplanationRepository();
 
         private Chapter startChapter;

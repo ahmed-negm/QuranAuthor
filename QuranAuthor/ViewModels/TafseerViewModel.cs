@@ -19,7 +19,7 @@ namespace QuranAuthor.ViewModels
 
         // Services
         private ChapterRepository chapterRepository = new ChapterRepository();
-        private SnippetRepository snippetRepository = new SnippetRepository();
+        private ExplanationSnippetsRepository snippetRepository = new ExplanationSnippetsRepository();
         private ExplanationRepository explanationRepository = new ExplanationRepository();
 
         // Private properties

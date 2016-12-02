@@ -8,13 +8,31 @@ using System.Threading.Tasks;
 
 namespace QuranAuthor.Repositories
 {
-    public class SnippetRepository : Repository
+    public class ExplanationSnippetsRepository : SnippetRepository
     {
+        public ExplanationSnippetsRepository()
+        {
+            base.TableName = "ExplanationSnippets";
+        }
+    }
+
+    public class SimilarSnippetsRepository : SnippetRepository
+    {
+        public SimilarSnippetsRepository()
+        {
+            base.TableName = "SimilarSnippets";
+        }
+    }
+
+    public abstract class SnippetRepository : Repository
+    {
+        protected string TableName { get; set; }
+
         public List<Snippet> GetSnippets(int chapterId, int page)
         {
             var snippets = new List<Snippet>();
 
-            string sql = "SELECT * FROM snippets WHERE chapterid = @chapterId AND page = @page Order By id";
+            string sql = "SELECT * FROM " + this.TableName + " WHERE chapterid = @chapterId AND page = @page Order By id";
             SQLiteCommand command = new SQLiteCommand(sql, Connection);
 
             command.Parameters.AddWithValue("@chapterId", chapterId);
@@ -31,7 +49,7 @@ namespace QuranAuthor.Repositories
 
         public Snippet AddSnippet(Snippet snippet)
         {
-            string sql = "INSERT INTO snippets(ChapterId, Page, StartVerse, EndVerse, StartLine, EndLine, StartPoint, EndPoint, Text, Rtf) VALUES (@ChapterId, @Page, @StartVerse, @EndVerse, @StartLine, @EndLine, @StartPoint, @EndPoint, @Text, @Rtf);";
+            string sql = "INSERT INTO " + this.TableName + "(ChapterId, Page, StartVerse, EndVerse, StartLine, EndLine, StartPoint, EndPoint, Text, Rtf) VALUES (@ChapterId, @Page, @StartVerse, @EndVerse, @StartLine, @EndLine, @StartPoint, @EndPoint, @Text, @Rtf);";
 
             var transaction = Connection.BeginTransaction();
 
@@ -64,7 +82,7 @@ namespace QuranAuthor.Repositories
 
         public void Delete(int id)
         {
-            string sql = "DELETE FROM snippets WHERE Id=@Id";
+            string sql = "DELETE FROM " + this.TableName + " WHERE Id=@Id";
 
             var transaction = Connection.BeginTransaction();
 
@@ -78,7 +96,7 @@ namespace QuranAuthor.Repositories
 
         private void Update(int id, Snippet snippet)
         {
-            string sql = "UPDATE snippets SET ChapterId=@ChapterId, Page=@Page, StartVerse=@StartVerse, EndVerse=@EndVerse, StartLine=@StartLine, EndLine=@EndLine, StartPoint=@StartPoint, EndPoint=@EndPoint, Text=@Text, Rtf=@Rtf WHERE Id=@Id";
+            string sql = "UPDATE " + this.TableName + " SET ChapterId=@ChapterId, Page=@Page, StartVerse=@StartVerse, EndVerse=@EndVerse, StartLine=@StartLine, EndLine=@EndLine, StartPoint=@StartPoint, EndPoint=@EndPoint, Text=@Text, Rtf=@Rtf WHERE Id=@Id";
 
             var transaction = Connection.BeginTransaction();
 

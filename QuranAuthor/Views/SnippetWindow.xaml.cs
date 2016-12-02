@@ -16,7 +16,6 @@ namespace QuranAuthor.Views
     {
         private ClipboardHelper clipboardHelper;
         private SnippetService snippetService = new SnippetService();
-        private SnippetRepository snippetRepository = new SnippetRepository();
         private Bitmap originalPage;
         private bool suspendEvents = false;
 
