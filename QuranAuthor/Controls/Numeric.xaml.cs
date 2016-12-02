@@ -85,6 +85,11 @@ namespace QuranAuthor.Controls
 
         private void txtPoint_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (string .IsNullOrEmpty(txtPoint.Text))
+            {
+                return;
+            }
+
             this.Value = int.Parse(txtPoint.Text);
             if (ValueChanged != null)
             {
