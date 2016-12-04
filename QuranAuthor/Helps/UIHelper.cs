@@ -178,6 +178,19 @@ namespace QuranAuthor.Helps
             return bitmap;
         }
 
+        public static Bitmap DrawSimilarSnippets(Bitmap bitmap, IList<Snippet> similarSnippets)
+        {
+            var explanations = new List<Explanation>();
+            foreach (var snippet in similarSnippets)
+            {
+                var exp = new Explanation();
+                exp.Text = snippet.Text;
+                exp.Top = snippet.Top;
+                explanations.Add(exp);
+            }
+            return DrawExplanation(bitmap, explanations);
+        }
+
         private static Bitmap GetIcon(ExplanationType explanationType, int icon)
         {
             var file = string.Empty;

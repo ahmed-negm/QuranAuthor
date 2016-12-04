@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QuranAuthor.Repositories
 {
@@ -22,6 +19,8 @@ namespace QuranAuthor.Repositories
         {
             base.Type = 1;
         }
+
+
     }
 
     public abstract class SnippetRepository : Repository
@@ -32,7 +31,7 @@ namespace QuranAuthor.Repositories
         {
             var snippets = new List<Snippet>();
 
-            string sql = "SELECT * FROM snippets WHERE chapterid = @chapterId AND page = @page AND type = @type Order By [order]";
+            string sql = "SELECT * FROM snippets WHERE chapterid = @chapterId AND page = @page AND type = @type AND parentId IS NULL Order By [order]";
             SQLiteCommand command = new SQLiteCommand(sql, Connection);
 
             command.Parameters.AddWithValue("@chapterId", chapterId);
@@ -48,9 +47,27 @@ namespace QuranAuthor.Repositories
             return snippets;
         }
 
+        public List<Snippet> GetSnippetsByParentId(string parentId)
+        {
+            var snippets = new List<Snippet>();
+
+            string sql = "SELECT * FROM snippets WHERE parentId = @parentId Order By [order]";
+            SQLiteCommand command = new SQLiteCommand(sql, Connection);
+
+            command.Parameters.AddWithValue("@parentId", parentId);
+
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                snippets.Add(new Snippet(reader));
+            }
+
+            return snippets;
+        }
+
         public Snippet AddSnippet(Snippet snippet)
         {
-            string sql = "INSERT INTO snippets(Id, Type, [Order], ChapterId, Page, StartVerse, EndVerse, StartLine, EndLine, StartPoint, EndPoint, Text, Rtf, ParentId) VALUES (@Id, @Type, @Order, @ChapterId, @Page, @StartVerse, @EndVerse, @StartLine, @EndLine, @StartPoint, @EndPoint, @Text, @Rtf, @ParentId);";
+            string sql = "INSERT INTO snippets(Id, Type, [Order], ChapterId, Page, StartVerse, EndVerse, StartLine, EndLine, StartPoint, EndPoint, Text, Rtf, Top, ParentId) VALUES (@Id, @Type, @Order, @ChapterId, @Page, @StartVerse, @EndVerse, @StartLine, @EndLine, @StartPoint, @EndPoint, @Text, @Rtf, @Top, @ParentId);";
 
             var transaction = Connection.BeginTransaction();
 
@@ -69,6 +86,7 @@ namespace QuranAuthor.Repositories
             command.Parameters.AddWithValue("@EndPoint", snippet.EndPoint);
             command.Parameters.AddWithValue("@Text", snippet.Text);
             command.Parameters.AddWithValue("@Rtf", snippet.Rtf);
+            command.Parameters.AddWithValue("@Top", snippet.Top);
             if (string.IsNullOrEmpty(snippet.ParentId))
             {
                 command.Parameters.AddWithValue("@ParentId", DBNull.Value);
@@ -77,7 +95,7 @@ namespace QuranAuthor.Repositories
             {
                 command.Parameters.AddWithValue("@ParentId", snippet.ParentId);
             }
-            
+
             command.ExecuteNonQuery();
             transaction.Commit();
             return snippet;
@@ -85,8 +103,8 @@ namespace QuranAuthor.Repositories
 
         public void Swap(Snippet snippet1, Snippet snippet2)
         {
-            this.Update(snippet1.Id, snippet2.Order);
-            this.Update(snippet2.Id, snippet1.Order);
+            this.UpdateOrder(snippet1.Id, snippet2.Order);
+            this.UpdateOrder(snippet2.Id, snippet1.Order);
         }
 
         public void Delete(string id)
@@ -103,7 +121,22 @@ namespace QuranAuthor.Repositories
             transaction.Commit();
         }
 
-        private void Update(string id, int order)
+        public void UpdateTop(string id, int top)
+        {
+            string sql = "UPDATE snippets SET [top]=@top WHERE Id=@Id";
+
+            var transaction = Connection.BeginTransaction();
+
+            SQLiteCommand command = new SQLiteCommand(sql, Connection);
+
+            command.Parameters.AddWithValue("@top", top);
+            command.Parameters.AddWithValue("@Id", id);
+
+            command.ExecuteNonQuery();
+            transaction.Commit();
+        }
+
+        private void UpdateOrder(string id, int order)
         {
             string sql = "UPDATE snippets SET [order]=@order WHERE Id=@Id";
 

@@ -1,5 +1,4 @@
-﻿using QuranAuthor.Helps;
-using QuranAuthor.ViewModels;
+﻿using QuranAuthor.ViewModels;
 using System.ComponentModel;
 using System.Windows;
 
@@ -37,7 +36,7 @@ namespace QuranAuthor.Views
             SnippetWindow snipetWindow = new SnippetWindow();
             if (snipetWindow.ShowDialog() == true && snipetWindow.Snippet != null)
             {
-                this.ViewModel.SnippetTaken(snipetWindow.Snippet, snipetWindow.Page);
+                this.ViewModel.SnippetTaken(snipetWindow.Snippet);
             }
         }
 

@@ -18,6 +18,7 @@ namespace QuranAuthor.Models
         public int EndPoint { get; set; }
         public string Text { get; set; }
         public string Rtf { get; set; }
+        public int Top { get; set; }
         public string ParentId { get; set; }
 
         public Snippet()
@@ -42,7 +43,12 @@ namespace QuranAuthor.Models
             this.Rtf = reader.GetString(12);
             try
             {
-                this.ParentId = reader.GetString(13);
+                this.Top = reader.GetInt32(13);
+            }
+            catch { }
+            try
+            {
+                this.ParentId = reader.GetString(14);
             }
             catch { }
         }

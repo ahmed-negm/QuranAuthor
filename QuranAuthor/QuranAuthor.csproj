@@ -65,6 +65,7 @@
     </Compile>
     <Compile Include="Commands\CommandReference.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
+    <Compile Include="Converters\ChapterConverter.cs" />
     <Compile Include="Converters\TypeToColorConverter.cs" />
     <Compile Include="Helps\MessageBoxHelper.cs" />
     <Compile Include="Models\Explanation.cs" />

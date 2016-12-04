@@ -49,7 +49,7 @@ namespace QuranAuthor.ViewModels
         private DelegateCommand newExpCommand;
         private DelegateCommand exportExpCommand;
         private DelegateCommand importExpCommand;
-        
+
         #endregion
 
         #region Constructor
@@ -345,7 +345,7 @@ namespace QuranAuthor.ViewModels
 
         #region Public Methods
 
-        public void SnippetTaken(Snippet snippet, Bitmap page)
+        public void SnippetTaken(Snippet snippet)
         {
             if (snippet.ChapterId != this.Chapter.Id || snippet.Page != this.CurrentPage)
             {
@@ -353,7 +353,6 @@ namespace QuranAuthor.ViewModels
                 return;
             }
 
-            this.Page = page;
             snippet.Order = this.Snippets.Count;
             this.snippetRepository.AddSnippet(snippet);
             this.LoadSnippets();
@@ -498,7 +497,7 @@ namespace QuranAuthor.ViewModels
         private void ImportExplanation()
         {
             var json = UIHelper.OpenFile();
-            if(!string.IsNullOrEmpty(json))
+            if (!string.IsNullOrEmpty(json))
             {
                 try
                 {
