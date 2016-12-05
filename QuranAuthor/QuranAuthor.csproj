@@ -67,7 +67,7 @@
     <Compile Include="Commands\DelegateCommand.cs" />
     <Compile Include="Converters\ChapterConverter.cs" />
     <Compile Include="Converters\TypeToColorConverter.cs" />
-    <Compile Include="Helps\MessageBoxHelper.cs" />
+    <Compile Include="Helps\UIHelper.cs" />
     <Compile Include="Models\Explanation.cs" />
     <Compile Include="Models\ModelBase.cs" />
     <Compile Include="Models\Verse.cs" />
@@ -108,7 +108,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Helps\UIHelper.cs" />
+    <Compile Include="Helps\BitmapHelper.cs" />
     <Compile Include="Helps\ClipboardHelper.cs" />
     <Compile Include="Repositories\Repository.cs" />
     <Compile Include="Helps\ScreenCapturer.cs" />

@@ -178,17 +178,55 @@ namespace QuranAuthor.Helps
             return bitmap;
         }
 
-        public static Bitmap DrawSimilarSnippets(Bitmap bitmap, IList<Snippet> similarSnippets)
+        public static Bitmap DrawSimilarSnippets(Bitmap bitmap, IList<Snippet> snippets)
         {
-            var explanations = new List<Explanation>();
-            foreach (var snippet in similarSnippets)
+            foreach (var snippet in snippets)
             {
-                var exp = new Explanation();
-                exp.Text = snippet.Text;
-                exp.Top = snippet.Top;
-                explanations.Add(exp);
+                using (Graphics g = Graphics.FromImage(bitmap))
+                {
+                    var similarImage = GetSimilarImage(snippet);
+                    var rect = new Rectangle(20, snippet.Top, similarImage.Width, similarImage.Height);
+                    g.DrawImage(similarImage,
+                                rect,
+                                new Rectangle(0, 0, similarImage.Width, similarImage.Height),
+                                GraphicsUnit.Pixel);
+                    g.DrawRectangle(explainBorderPen, rect);
+                    g.Flush();
+                }
             }
-            return DrawExplanation(bitmap, explanations);
+
+            return bitmap;
+        }
+
+        private static Bitmap GetSimilarImage(Snippet snippet)
+        {
+            var startY = 100 + ((snippet.StartLine - 1) * 104);
+            var endY = 100 + ((snippet.EndLine) * 104);
+
+            var page = LoadPage(snippet.Page);
+            Rectangle cropRect = new Rectangle(40, startY, page.Width - 80, endY - startY);
+            
+            Bitmap target = new Bitmap(cropRect.Width + 40, cropRect.Height);
+
+            using (Graphics g = Graphics.FromImage(target))
+            {
+                g.DrawImage(page, new Rectangle(0, 0, target.Width - 40, target.Height),
+                                 cropRect, GraphicsUnit.Pixel);
+                g.FillRectangle(Brushes.White, new Rectangle(snippet.StartPoint - 40, 0, target.Width - snippet.StartPoint + 40, 104));
+                g.FillRectangle(Brushes.White, new Rectangle(0, target.Height - 104, snippet.EndPoint - 40, 104));
+            }
+
+            target = ResizeImage(target, (int)(target.Width * 0.85), (int)(target.Height * 0.85));
+
+            Bitmap result = new Bitmap(cropRect.Width + 40, target.Height);
+
+            using (Graphics g = Graphics.FromImage(result))
+            {
+                g.DrawImage(target, new Rectangle(0, 0, target.Width, target.Height),
+                                 new Rectangle(0, 0, target.Width, target.Height), GraphicsUnit.Pixel);
+            }
+
+            return result;
         }
 
         private static Bitmap GetIcon(ExplanationType explanationType, int icon)
@@ -409,6 +447,31 @@ namespace QuranAuthor.Helps
         private static RectangleF AdjustRegionRect(RectangleF rect)
         {
             return new RectangleF(rect.Left - 15, rect.Top - 1, rect.Width + 24, rect.Height);
+        }
+
+        private static Bitmap ResizeImage(Image image, int width, int height)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return destImage;
         }
     }
 }
