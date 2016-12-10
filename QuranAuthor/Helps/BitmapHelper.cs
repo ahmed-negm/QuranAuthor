@@ -20,12 +20,15 @@ namespace QuranAuthor.Helps
         private static Pen explainBorderPen = new Pen(Color.FromArgb(255, 112, 173, 71), 2);
         private static Pen noteBorderPen = new Pen(Color.FromArgb(255, 191, 191, 191), 2);
         private static Pen guideBorderPen = new Pen(Color.FromArgb(255, 255, 165, 0), 2);
+        private static Pen similarBorderPen = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
+        private static Brush similarBorderBrush = new SolidBrush(Color.FromArgb(255, 112, 173, 71));
         private static Brush explainBrush = new SolidBrush(Color.FromArgb(255, 0, 112, 192));
         private static Brush noteBrush = new SolidBrush(Color.Black);
         private static Brush guideBrush = new SolidBrush(Color.FromArgb(255, 255, 165, 0));
         private static Brush focusBrush = new SolidBrush(Color.FromArgb(255, 132, 60, 12));
         private static Font font36 = new Font("GE SS Text Light", 36);
         private static Font font30 = new Font("GE SS Text Light", 30);
+        private static Font font20 = new Font("GE SS Text Light", 20);
         private static StringFormat rightToLeftStringFormat = new StringFormat(StringFormatFlags.DirectionRightToLeft);
         private static Dictionary<string, Bitmap> icons = new Dictionary<string, Bitmap>();
 
@@ -186,11 +189,15 @@ namespace QuranAuthor.Helps
                 {
                     var similarImage = GetSimilarImage(snippet);
                     var rect = new Rectangle(20, snippet.Top, similarImage.Width, similarImage.Height);
+                    var smallerRect = new Rectangle(24, snippet.Top + 4, similarImage.Width - 8, similarImage.Height - 8);
+                    g.FillRectangle(similarBorderBrush, rect);
+                    g.FillRectangle(Brushes.White, smallerRect);
                     g.DrawImage(similarImage,
                                 rect,
                                 new Rectangle(0, 0, similarImage.Width, similarImage.Height),
                                 GraphicsUnit.Pixel);
-                    g.DrawRectangle(explainBorderPen, rect);
+                    g.DrawRectangle(similarBorderPen, rect);
+                    g.DrawRectangle(similarBorderPen, smallerRect);
                     g.Flush();
                 }
             }
@@ -216,14 +223,44 @@ namespace QuranAuthor.Helps
                 g.FillRectangle(Brushes.White, new Rectangle(0, target.Height - 104, snippet.EndPoint - 40, 104));
             }
 
-            target = ResizeImage(target, (int)(target.Width * 0.85), (int)(target.Height * 0.85));
+            target = ResizeImage(target, (int)(target.Width * 0.80), (int)(target.Height * 0.80));
 
-            Bitmap result = new Bitmap(cropRect.Width + 40, target.Height);
+            Bitmap result = new Bitmap(cropRect.Width + 40, Math.Max(target.Height + 10, 220));
 
             using (Graphics g = Graphics.FromImage(result))
             {
-                g.DrawImage(target, new Rectangle(0, 0, target.Width, target.Height),
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                g.TextRenderingHint = TextRenderingHint.AntiAlias;
+
+                g.DrawImage(target, new Rectangle(5, 5, target.Width, target.Height),
                                  new Rectangle(0, 0, target.Width, target.Height), GraphicsUnit.Pixel);
+                var iconImage = new Bitmap(Path.Combine(iconsPath, "OpenBook.png"));
+                g.DrawImage(iconImage, new Rectangle(cropRect.Width + 20 - iconImage.Width, 20, iconImage.Width, iconImage.Height),
+                                 new Rectangle(0, 0, iconImage.Width, iconImage.Height), GraphicsUnit.Pixel);
+                var signature = GetSnippetSignature(snippet);
+
+                StringFormat stringFormat = new StringFormat(StringFormatFlags.DirectionRightToLeft);
+                stringFormat.Alignment = StringAlignment.Center;
+                stringFormat.LineAlignment = StringAlignment.Center;
+
+                g.DrawString(signature, font20, explainBrush, new Rectangle(cropRect.Width + 20 - iconImage.Width, 170, iconImage.Width, 50), stringFormat);
+            }
+
+            return result;
+        }
+
+        private static string GetSnippetSignature(Snippet snippet)
+        {
+            var result = new QuranAuthor.Repositories.ChapterRepository().GetChapters().FirstOrDefault(C => C.Id == snippet.ChapterId).Name;
+            if(snippet.StartVerse == snippet.EndVerse)
+            {
+                result = result + " (" + snippet.StartVerse + ")";
+            }
+            else
+            {
+                result = result + " (" + snippet.StartVerse + " : " + snippet.EndVerse + ")";
             }
 
             return result;
