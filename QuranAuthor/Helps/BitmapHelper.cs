@@ -108,6 +108,41 @@ namespace QuranAuthor.Helps
             return bitmap;
         }
 
+        public static Bitmap RemoveAroundSelection(Bitmap bitmap, Snippet snippet)
+        {
+            Color transparent = Color.FromArgb(0, 255, 255, 255);
+            var startY = 100 + ((snippet.StartLine - 1) * 104);
+            var endY = 100 + ((snippet.EndLine) * 104);
+            for (int y = 0; y < 1717; y++)
+            {
+                for (int x = 0; x < 1058; x++)
+                {
+                    if (y < startY || y > endY)
+                    {
+                        bitmap.SetPixel(x, y, transparent);
+                    }
+                }
+            }
+
+            for (int y = startY; y <= startY + 104; y++)
+            {
+                for (int x = snippet.StartPoint; x < 1058; x++)
+                {
+                    bitmap.SetPixel(x, y, transparent);
+                }
+            }
+
+            for (int y = endY; y >= endY - 104; y--)
+            {
+                for (int x = 0; x <= snippet.EndPoint; x++)
+                {
+                    bitmap.SetPixel(x, y, transparent);
+                }
+            }
+
+            return bitmap;
+        }
+
         public static BitmapImage BitmapToImageSource(Bitmap page)
         {
             using (MemoryStream memory = new MemoryStream())
@@ -181,13 +216,13 @@ namespace QuranAuthor.Helps
             return bitmap;
         }
 
-        public static Bitmap DrawSimilarSnippets(Bitmap bitmap, IList<Snippet> snippets)
+        public static Bitmap DrawSimilarSnippets(Bitmap bitmap, IList<Snippet> snippets, bool drawSnippet)
         {
             foreach (var snippet in snippets)
             {
                 using (Graphics g = Graphics.FromImage(bitmap))
                 {
-                    var similarImage = GetSimilarImage(snippet);
+                    var similarImage = GetSimilarImage(snippet, drawSnippet);
                     var rect = new Rectangle(20, snippet.Top, similarImage.Width, similarImage.Height);
                     var smallerRect = new Rectangle(24, snippet.Top + 4, similarImage.Width - 8, similarImage.Height - 8);
                     g.FillRectangle(similarBorderBrush, rect);
@@ -205,12 +240,20 @@ namespace QuranAuthor.Helps
             return bitmap;
         }
 
-        private static Bitmap GetSimilarImage(Snippet snippet)
+        private static Bitmap GetSimilarImage(Snippet snippet, bool drawSnippet)
         {
             var startY = 100 + ((snippet.StartLine - 1) * 104);
             var endY = 100 + ((snippet.EndLine) * 104);
 
             var page = LoadPage(snippet.Page);
+            Bitmap snippetPage = null;
+            if (drawSnippet)
+            {
+                snippetPage = RemoveAroundSelection((Bitmap)page.Clone(), snippet);
+                snippetPage = ResizeImage(snippetPage, 86, 140);
+            }
+            var iconImage = new Bitmap(Path.Combine(iconsPath, "OpenBook.png"));
+
             Rectangle cropRect = new Rectangle(40, startY, page.Width - 80, endY - startY);
             
             Bitmap target = new Bitmap(cropRect.Width + 40, cropRect.Height);
@@ -236,9 +279,16 @@ namespace QuranAuthor.Helps
 
                 g.DrawImage(target, new Rectangle(5, 5, target.Width, target.Height),
                                  new Rectangle(0, 0, target.Width, target.Height), GraphicsUnit.Pixel);
-                var iconImage = new Bitmap(Path.Combine(iconsPath, "OpenBook.png"));
+                
                 g.DrawImage(iconImage, new Rectangle(cropRect.Width + 20 - iconImage.Width, 20, iconImage.Width, iconImage.Height),
                                  new Rectangle(0, 0, iconImage.Width, iconImage.Height), GraphicsUnit.Pixel);
+
+                if (drawSnippet)
+                {
+                    g.DrawImage(snippetPage, new Rectangle(cropRect.Width + (snippet.Page % 2 == 1 ? 10 : -84) - snippetPage.Width, 20, snippetPage.Width, snippetPage.Height),
+                                     new Rectangle(4, 0, snippetPage.Width - 10, snippetPage.Height), GraphicsUnit.Pixel);
+                }
+
                 var signature = GetSnippetSignature(snippet);
 
                 StringFormat stringFormat = new StringFormat(StringFormatFlags.DirectionRightToLeft);

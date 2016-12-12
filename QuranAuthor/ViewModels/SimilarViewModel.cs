@@ -807,7 +807,7 @@ namespace QuranAuthor.ViewModels
         private void DrawPage()
         {
             var expPage = BitmapHelper.DrawExplanation((Bitmap)this.Page.Clone(), this.Explanations);
-            expPage = BitmapHelper.DrawSimilarSnippets(expPage, this.SimilarSnippets);
+            expPage = BitmapHelper.DrawSimilarSnippets(expPage, this.SimilarSnippets, false);
             expPage.Save(@"E:\Fun\Tafseer\Backup\Images\Debug\1.png", System.Drawing.Imaging.ImageFormat.Png);
             this.ImageSource = BitmapHelper.BitmapToImageSource(expPage);
         }
