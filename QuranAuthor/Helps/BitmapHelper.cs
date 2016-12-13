@@ -17,6 +17,7 @@ namespace QuranAuthor.Helps
         private static string pagesPath = ConfigurationManager.AppSettings["PagesPath"];
         private static string iconsPath = ConfigurationManager.AppSettings["IconsPath"];
         private static Color yellowColor = Color.FromArgb(255, 246, 129);
+        private static Color transparentColor = Color.FromArgb(0, 255, 255, 255);
         private static Pen explainBorderPen = new Pen(Color.FromArgb(255, 112, 173, 71), 2);
         private static Pen noteBorderPen = new Pen(Color.FromArgb(255, 191, 191, 191), 2);
         private static Pen guideBorderPen = new Pen(Color.FromArgb(255, 255, 165, 0), 2);
@@ -75,6 +76,54 @@ namespace QuranAuthor.Helps
         }
 
         public static Bitmap FocusSelection(Bitmap bitmap, Snippet snippet)
+        {
+            var startY = 100 + ((snippet.StartLine - 1) * 104);
+            var endY = 100 + ((snippet.EndLine) * 104);
+
+            //create a Bitmap the size of the image provided  
+            Bitmap bmp = (Bitmap)bitmap.Clone();
+
+            //create a graphics object from the image  
+            using (Graphics gfx = Graphics.FromImage(bmp))
+            {
+
+                //create a color matrix object  
+                ColorMatrix matrix = new ColorMatrix();
+
+                //set the opacity  
+                matrix.Matrix33 = 0.2F;
+
+                //create image attributes  
+                ImageAttributes attributes = new ImageAttributes();
+
+                //set the color(opacity) of the image  
+                attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
+                // Upper Part
+                var opacityRect = new Rectangle(20, 65, bmp.Width - 40, startY - 65);
+                gfx.FillRectangle(Brushes.White, opacityRect);
+                gfx.DrawImage(bitmap, opacityRect, opacityRect.X, opacityRect.Y, opacityRect.Width, opacityRect.Height, GraphicsUnit.Pixel, attributes);
+
+                // Lower Part
+                opacityRect = new Rectangle(20, endY, bmp.Width - 40, bmp.Height - endY - 45);
+                gfx.FillRectangle(Brushes.White, opacityRect);
+                gfx.DrawImage(bitmap, opacityRect, opacityRect.X, opacityRect.Y, opacityRect.Width, opacityRect.Height, GraphicsUnit.Pixel, attributes);
+
+                // Right Part
+                opacityRect = new Rectangle(snippet.StartPoint, startY, bmp.Width - snippet.StartPoint - 40, 104);
+                gfx.FillRectangle(Brushes.White, opacityRect);
+                gfx.DrawImage(bitmap, opacityRect, opacityRect.X, opacityRect.Y, opacityRect.Width, opacityRect.Height, GraphicsUnit.Pixel, attributes);
+
+                // Left Part
+                opacityRect = new Rectangle(20, endY - 104, snippet.EndPoint, 104);
+                gfx.FillRectangle(Brushes.White, opacityRect);
+                gfx.DrawImage(bitmap, opacityRect, opacityRect.X, opacityRect.Y, opacityRect.Width, opacityRect.Height, GraphicsUnit.Pixel, attributes);
+            }
+
+            return bmp;
+        }
+
+        public static Bitmap FocusSelectionOld(Bitmap bitmap, Snippet snippet)
         {
             var startY = 100 + ((snippet.StartLine - 1) * 104);
             var endY = 100 + ((snippet.EndLine) * 104);
@@ -255,7 +304,7 @@ namespace QuranAuthor.Helps
             var iconImage = new Bitmap(Path.Combine(iconsPath, "OpenBook.png"));
 
             Rectangle cropRect = new Rectangle(40, startY, page.Width - 80, endY - startY);
-            
+
             Bitmap target = new Bitmap(cropRect.Width + 40, cropRect.Height);
 
             using (Graphics g = Graphics.FromImage(target))
@@ -279,7 +328,7 @@ namespace QuranAuthor.Helps
 
                 g.DrawImage(target, new Rectangle(5, 5, target.Width, target.Height),
                                  new Rectangle(0, 0, target.Width, target.Height), GraphicsUnit.Pixel);
-                
+
                 g.DrawImage(iconImage, new Rectangle(cropRect.Width + 20 - iconImage.Width, 20, iconImage.Width, iconImage.Height),
                                  new Rectangle(0, 0, iconImage.Width, iconImage.Height), GraphicsUnit.Pixel);
 
@@ -304,7 +353,7 @@ namespace QuranAuthor.Helps
         private static string GetSnippetSignature(Snippet snippet)
         {
             var result = new QuranAuthor.Repositories.ChapterRepository().GetChapters().FirstOrDefault(C => C.Id == snippet.ChapterId).Name;
-            if(snippet.StartVerse == snippet.EndVerse)
+            if (snippet.StartVerse == snippet.EndVerse)
             {
                 result = result + " (" + snippet.StartVerse + ")";
             }
@@ -559,6 +608,37 @@ namespace QuranAuthor.Helps
             }
 
             return destImage;
+        }
+
+        public static Bitmap ChangeImageOpacity(Bitmap image, float opacity)
+        {
+            //create a Bitmap the size of the image provided  
+            Bitmap bmp = (Bitmap)image.Clone();
+
+            //create a graphics object from the image  
+            using (Graphics gfx = Graphics.FromImage(bmp))
+            {
+
+                //create a color matrix object  
+                ColorMatrix matrix = new ColorMatrix();
+
+                //set the opacity  
+                matrix.Matrix33 = opacity;
+
+                //create image attributes  
+                ImageAttributes attributes = new ImageAttributes();
+
+                //set the color(opacity) of the image  
+                attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
+                var opacityRect = new Rectangle(20, 65, bmp.Width - 40, bmp.Height - 110);
+
+                gfx.FillRectangle(Brushes.White, opacityRect);
+
+                //now draw the image  
+                gfx.DrawImage(image, opacityRect, opacityRect.X, opacityRect.Y, opacityRect.Width, opacityRect.Height, GraphicsUnit.Pixel, attributes);
+            }
+            return bmp;
         }
     }
 }
