@@ -34,7 +34,7 @@
             <RadioButton x:Name="chkWhole" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Content="الأية كاملة" Checked="CheckBox_Checked"/>
             <RadioButton x:Name="chkPart" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Content="جزء من الأية:" Checked="CheckBox_Checked" IsChecked="True"/>
 
-            <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Padding="10" x:Name="txtVerse" FontSize="28" Margin="10,0,10,10" FlowDirection="RightToLeft" FontFamily="Traditional Arabic" TextWrapping="Wrap" TextChanged="TxtVerse_TextChanged" />
+            <TextBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Padding="10" x:Name="txtVerse" FontSize="28" Margin="10,0,10,10" FlowDirection="RightToLeft" FontFamily="Arabic Typesetting" TextWrapping="Wrap" TextChanged="TxtVerse_TextChanged" />
             <Button x:Name="btnDone" Grid.Row="6" Grid.Column="1" Content="موافق" Margin="10" HorizontalAlignment="Right" Width="150" Click="Done_Click" />
             
         </Grid>

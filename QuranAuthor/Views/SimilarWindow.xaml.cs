@@ -1,5 +1,6 @@
 ﻿using QuranAuthor.ViewModels;
 using System.ComponentModel;
+using System.Configuration;
 using System.Windows;
 
 namespace QuranAuthor.Views
@@ -16,7 +17,9 @@ namespace QuranAuthor.Views
             this.numExpTop.ValueChanged += numExpTop_ValueChanged;
             this.numPage.ValueChanged += numPage_ValueChanged;
 
-            this.ViewModel.Chapter = this.ViewModel.Chapters[38];
+            int defaultChapter = 1;
+            int.TryParse(ConfigurationManager.AppSettings["DefaultChapter"], out defaultChapter);
+            this.ViewModel.Chapter = this.ViewModel.Chapters[defaultChapter];
         }
 
         public SimilarViewModel ViewModel
