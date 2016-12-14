@@ -220,6 +220,21 @@ namespace QuranAuthor.Helps
 
         public static Bitmap DrawExplanation(Bitmap bitmap, IList<Explanation> explanations)
         {
+            /*
+            var fontName = "GE SS Light";
+            var myFont = new Font(fontName, 36);
+            System.Windows.MessageBox.Show("myFont.Name: " + myFont.Name);
+            if (myFont.Name != fontName) 
+            {
+                System.Windows.MessageBox.Show("Not found");
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("Found");
+            }
+
+            */
+
             var g = Graphics.FromImage(bitmap);
 
             g.SmoothingMode = SmoothingMode.AntiAlias;

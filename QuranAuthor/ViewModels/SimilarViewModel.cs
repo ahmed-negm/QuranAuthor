@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Web.Script.Serialization;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -598,6 +597,7 @@ namespace QuranAuthor.ViewModels
 
         private void ImportExplanation()
         {
+            /*
             var json = UIHelper.OpenFile();
             if (!string.IsNullOrEmpty(json))
             {
@@ -624,6 +624,7 @@ namespace QuranAuthor.ViewModels
                     UIHelper.MessageBox("Can't Import file: " + ex.Message);
                 }
             }
+            */ 
         }
 
         private bool CanExportExplanation()
@@ -633,8 +634,10 @@ namespace QuranAuthor.ViewModels
 
         private void ExportExplanation()
         {
+            /*
             var json = new JavaScriptSerializer().Serialize(this.Explanations);
             UIHelper.SaveToFile(json);
+            */ 
         }
 
         private bool CanDeleteSimilar()
@@ -689,6 +692,7 @@ namespace QuranAuthor.ViewModels
 
         private void ImportSimilar()
         {
+            /*
             var json = UIHelper.OpenFile();
             if (!string.IsNullOrEmpty(json))
             {
@@ -723,6 +727,7 @@ namespace QuranAuthor.ViewModels
                     UIHelper.MessageBox("Can't Import file: " + ex.Message);
                 }
             }
+            */
         }
 
         private bool CanExportSimilar()
@@ -732,8 +737,10 @@ namespace QuranAuthor.ViewModels
 
         private void ExportSimilar()
         {
+            /*
             var json = new JavaScriptSerializer().Serialize(this.SimilarSnippets);
             UIHelper.SaveToFile(json);
+            */ 
         }
 
         #endregion
@@ -808,7 +815,6 @@ namespace QuranAuthor.ViewModels
         {
             var expPage = BitmapHelper.DrawExplanation((Bitmap)this.Page.Clone(), this.Explanations);
             expPage = BitmapHelper.DrawSimilarSnippets(expPage, this.SimilarSnippets, true);
-            expPage.Save(@"E:\Fun\Tafseer\Backup\Images\Debug\1.png", System.Drawing.Imaging.ImageFormat.Png);
             this.ImageSource = BitmapHelper.BitmapToImageSource(expPage);
         }
 

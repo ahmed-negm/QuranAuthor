@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Web.Script.Serialization;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -485,8 +484,10 @@ namespace QuranAuthor.ViewModels
 
         private void ExportExplanation()
         {
+            /*
             var json = new JavaScriptSerializer().Serialize(this.Explanations);
             UIHelper.SaveToFile(json);
+            */ 
         }
 
         private bool CanImportExplanation()
@@ -496,6 +497,7 @@ namespace QuranAuthor.ViewModels
 
         private void ImportExplanation()
         {
+            /*
             var json = UIHelper.OpenFile();
             if (!string.IsNullOrEmpty(json))
             {
@@ -522,6 +524,7 @@ namespace QuranAuthor.ViewModels
                     UIHelper.MessageBox("Can't Import file: " + ex.Message);
                 }
             }
+            */
         }
 
         #endregion

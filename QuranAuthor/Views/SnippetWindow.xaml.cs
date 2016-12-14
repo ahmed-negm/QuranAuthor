@@ -104,29 +104,8 @@ namespace QuranAuthor.Views
 
         private void RenderSelection()
         {
-            var worker = new BackgroundWorker();
-            worker.DoWork += worker_DoWork;
-            worker.RunWorkerCompleted += worker_RunWorkerCompleted;
-            numStart.IsEnabled = false;
-            numEnd.IsEnabled = false;
-            imgPage.Visibility = System.Windows.Visibility.Hidden;
-            worker.RunWorkerAsync();
-        }
-
-        private void worker_DoWork(object sender, DoWorkEventArgs e)
-        {
             this.Page = BitmapHelper.FocusSelection((Bitmap)originalPage.Clone(), Snippet);
-            this.Dispatcher.Invoke(() =>
-            {
-                imgPage.Source = BitmapHelper.BitmapToImageSource(this.Page);
-            });
-        }
-
-        private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            numStart.IsEnabled = true;
-            numEnd.IsEnabled = true;
-            imgPage.Visibility = System.Windows.Visibility.Visible;
+            imgPage.Source = BitmapHelper.BitmapToImageSource(this.Page);
         }
     }
 }

@@ -5,7 +5,7 @@
         xmlns:Converters="clr-namespace:QuranAuthor.Converters"
         x:Class="QuranAuthor.Views.SimilarWindow"
         Title="Enter Similars"  Width="1360" Height="740" FlowDirection="RightToLeft" WindowStartupLocation="CenterScreen" WindowState="Maximized"
-        FontSize="20" FontFamily="GE SS Text Light" Closed="Window_Closed">
+        FontSize="20" FontFamily="GE SS Text Light" Closed="Window_Closed" Icon="../Icons/quran.ico">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
         <Converters:TypeToColorConverter x:Key="ColorConverter" />
