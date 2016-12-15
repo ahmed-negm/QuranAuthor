@@ -27,7 +27,7 @@ namespace QuranAuthor.Views
             InitializeComponent();
             this.clipboardHelper = new ClipboardHelper(this);
             this.clipboardHelper.ItemCopied += ClipboardHelper_ItemCopied;
-            grdControls.Visibility = System.Windows.Visibility.Hidden;
+            tabControl.Visibility = System.Windows.Visibility.Hidden;
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -93,7 +93,7 @@ namespace QuranAuthor.Views
             numEnd.Value = Snippet.EndPoint;
             suspendEvents = false;
             btnDone.IsEnabled = false;
-            grdControls.Visibility = System.Windows.Visibility.Visible;
+            tabControl.Visibility = System.Windows.Visibility.Visible;
             this.Activate();
         }
 
