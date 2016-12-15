@@ -167,6 +167,7 @@ coverage/
 
 # NuGet packages
 Solutions/packages/*.*
+packages/*.*
 
 # Merge tmp files
 *.orig
