@@ -16,6 +16,7 @@ namespace QuranAuthor.Helps
     {
         private static string pagesPath = ConfigurationManager.AppSettings["PagesPath"];
         private static string iconsPath = ConfigurationManager.AppSettings["IconsPath"];
+        private static string fontName = ConfigurationManager.AppSettings["FontName"];
         private static Color yellowColor = Color.FromArgb(255, 246, 129);
         private static Color transparentColor = Color.FromArgb(0, 255, 255, 255);
         private static Pen explainBorderPen = new Pen(Color.FromArgb(255, 112, 173, 71), 2);
@@ -27,9 +28,9 @@ namespace QuranAuthor.Helps
         private static Brush noteBrush = new SolidBrush(Color.Black);
         private static Brush guideBrush = new SolidBrush(Color.FromArgb(255, 255, 165, 0));
         private static Brush focusBrush = new SolidBrush(Color.FromArgb(255, 132, 60, 12));
-        private static Font font36 = new Font("GE SS Text Light", 36);
-        private static Font font30 = new Font("GE SS Text Light", 30);
-        private static Font font20 = new Font("GE SS Text Light", 20);
+        private static Font font36 = new Font(fontName, 36);
+        private static Font font30 = new Font(fontName, 30);
+        private static Font font20 = new Font(fontName, 20);
         private static StringFormat rightToLeftStringFormat = new StringFormat(StringFormatFlags.DirectionRightToLeft);
         private static Dictionary<string, Bitmap> icons = new Dictionary<string, Bitmap>();
 

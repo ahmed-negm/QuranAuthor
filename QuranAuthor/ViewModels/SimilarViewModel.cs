@@ -752,11 +752,10 @@ namespace QuranAuthor.ViewModels
             this.HasSnippet = this.Snippet != null;
             if (this.HasSnippet)
             {
-                var worker = new BackgroundWorker();
-                worker.DoWork += worker_DoWork;
-                worker.RunWorkerCompleted += worker_RunWorkerCompleted;
-                this.HasSnippet = false;
-                worker.RunWorkerAsync();
+                this.Page = BitmapHelper.LoadPage(this.Snippet.Page);
+                this.Page = BitmapHelper.FocusSelection(this.Page, this.Snippet);
+                this.LoadExplanations();
+                this.LoadSimilarSnippets();
             }
         }
 
@@ -769,19 +768,6 @@ namespace QuranAuthor.ViewModels
                 explanations.ForEach(S => this.Explanations.Add(S));
                 this.DrawPage();
             }
-        }
-
-        private void worker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            this.Page = BitmapHelper.LoadPage(this.Snippet.Page);
-            this.Page = BitmapHelper.FocusSelection(this.Page, this.Snippet);
-        }
-
-        private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            this.LoadExplanations();
-            this.LoadSimilarSnippets();
-            this.HasSnippet = true;
         }
 
         private void LoadExplanation()
