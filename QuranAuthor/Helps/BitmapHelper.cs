@@ -28,9 +28,10 @@ namespace QuranAuthor.Helps
         private static Brush noteBrush = new SolidBrush(Color.Black);
         private static Brush guideBrush = new SolidBrush(Color.FromArgb(255, 255, 165, 0));
         private static Brush focusBrush = new SolidBrush(Color.FromArgb(255, 132, 60, 12));
+        private static Brush chapterBrush = new SolidBrush(Color.FromArgb(255, 80, 80, 80));
         private static Font font36 = new Font(fontName, 36);
         private static Font font30 = new Font(fontName, 30);
-        private static Font font20 = new Font(fontName, 20);
+        private static Font font22 = new Font(fontName, 22);
         private static StringFormat rightToLeftStringFormat = new StringFormat(StringFormatFlags.DirectionRightToLeft);
         private static Dictionary<string, Bitmap> icons = new Dictionary<string, Bitmap>();
 
@@ -124,40 +125,6 @@ namespace QuranAuthor.Helps
             return bmp;
         }
 
-        public static Bitmap FocusSelectionOld(Bitmap bitmap, Snippet snippet)
-        {
-            var startY = 100 + ((snippet.StartLine - 1) * 104);
-            var endY = 100 + ((snippet.EndLine) * 104);
-            for (int y = 80; y < 1675; y++)
-            {
-                for (int x = 49; x <= 1008; x++)
-                {
-                    if (y < startY || y > endY)
-                    {
-                        Blur(bitmap, y, x);
-                    }
-                }
-            }
-
-            for (int y = startY; y <= startY + 104; y++)
-            {
-                for (int x = snippet.StartPoint; x <= 1008; x++)
-                {
-                    Blur(bitmap, y, x);
-                }
-            }
-
-            for (int y = endY; y >= endY - 104; y--)
-            {
-                for (int x = 49; x <= snippet.EndPoint; x++)
-                {
-                    Blur(bitmap, y, x);
-                }
-            }
-
-            return bitmap;
-        }
-
         public static Bitmap RemoveAroundSelection(Bitmap bitmap, Snippet snippet)
         {
             Color transparent = Color.FromArgb(0, 255, 255, 255);
@@ -221,21 +188,6 @@ namespace QuranAuthor.Helps
 
         public static Bitmap DrawExplanation(Bitmap bitmap, IList<Explanation> explanations)
         {
-            /*
-            var fontName = "GE SS Light";
-            var myFont = new Font(fontName, 36);
-            System.Windows.MessageBox.Show("myFont.Name: " + myFont.Name);
-            if (myFont.Name != fontName) 
-            {
-                System.Windows.MessageBox.Show("Not found");
-            }
-            else
-            {
-                System.Windows.MessageBox.Show("Found");
-            }
-
-            */
-
             var g = Graphics.FromImage(bitmap);
 
             g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -296,8 +248,6 @@ namespace QuranAuthor.Helps
                                 rect,
                                 new Rectangle(0, 0, similarImage.Width, similarImage.Height),
                                 GraphicsUnit.Pixel);
-                    g.DrawRectangle(similarBorderPen, rect);
-                    g.DrawRectangle(similarBorderPen, smallerRect);
                     g.Flush();
                 }
             }
@@ -315,7 +265,7 @@ namespace QuranAuthor.Helps
             if (drawSnippet)
             {
                 snippetPage = RemoveAroundSelection((Bitmap)page.Clone(), snippet);
-                snippetPage = ResizeImage(snippetPage, 86, 140);
+                snippetPage = ResizeImage(snippetPage, 78, 130);
             }
             var iconImage = new Bitmap(Path.Combine(iconsPath, "OpenBook.png"));
 
@@ -350,7 +300,7 @@ namespace QuranAuthor.Helps
 
                 if (drawSnippet)
                 {
-                    g.DrawImage(snippetPage, new Rectangle(cropRect.Width + (snippet.Page % 2 == 1 ? 10 : -84) - snippetPage.Width, 20, snippetPage.Width, snippetPage.Height),
+                    g.DrawImage(snippetPage, new Rectangle(cropRect.Width + (snippet.Page % 2 == 1 ? 9 : -77) - snippetPage.Width, 32, snippetPage.Width, snippetPage.Height),
                                      new Rectangle(4, 0, snippetPage.Width - 10, snippetPage.Height), GraphicsUnit.Pixel);
                 }
 
@@ -360,7 +310,7 @@ namespace QuranAuthor.Helps
                 stringFormat.Alignment = StringAlignment.Center;
                 stringFormat.LineAlignment = StringAlignment.Center;
 
-                g.DrawString(signature, font20, explainBrush, new Rectangle(cropRect.Width + 20 - iconImage.Width, 170, iconImage.Width, 50), stringFormat);
+                g.DrawString(signature, font22, chapterBrush, new Rectangle(cropRect.Width + 20 - iconImage.Width, 170, iconImage.Width, 50), stringFormat);
             }
 
             return result;
@@ -404,60 +354,6 @@ namespace QuranAuthor.Helps
                 icons.Add(file, new Bitmap(Path.Combine(iconsPath, file + ".png")));
             }
             return icons[file];
-        }
-
-        private static void Blur(Bitmap bitmap, int y, int x)
-        {
-            var color = bitmap.GetPixel(x, y);
-            if (color.R == 255 & color.G == 255 && color.B == 255)
-            {
-                return;
-            }
-
-            bitmap.SetPixel(x, y, Color.FromArgb(50, color));
-        }
-
-        private static List<SnippetPoint> GetSnippetPoints(Snippet snippet)
-        {
-            var points = new List<SnippetPoint>();
-
-            for (int line = snippet.StartLine; line <= snippet.EndLine; line++)
-            {
-                var startY = 100 + ((line - 1) * 104);
-                for (int y = startY; y <= startY + 104; y++)
-                {
-                    if (line == snippet.StartLine && line == snippet.EndLine)
-                    {
-                        for (int x = snippet.EndPoint; x <= snippet.StartPoint; x++)
-                        {
-                            points.Add(new SnippetPoint(x, y));
-                        }
-                    }
-                    else if (line == snippet.StartLine)
-                    {
-                        for (int x = 49; x <= snippet.StartPoint; x++)
-                        {
-                            points.Add(new SnippetPoint(x, y));
-                        }
-                    }
-                    else if (line == snippet.EndLine)
-                    {
-                        for (int x = snippet.EndPoint; x <= 1008; x++)
-                        {
-                            points.Add(new SnippetPoint(x, y));
-                        }
-                    }
-                    else
-                    {
-                        for (int x = 49; x <= 1008; x++)
-                        {
-                            points.Add(new SnippetPoint(x, y));
-                        }
-                    }
-                }
-            }
-
-            return points;
         }
 
         private static GraphicsPath RoundedRect(Rectangle bounds, int radius)
@@ -624,37 +520,6 @@ namespace QuranAuthor.Helps
             }
 
             return destImage;
-        }
-
-        public static Bitmap ChangeImageOpacity(Bitmap image, float opacity)
-        {
-            //create a Bitmap the size of the image provided  
-            Bitmap bmp = (Bitmap)image.Clone();
-
-            //create a graphics object from the image  
-            using (Graphics gfx = Graphics.FromImage(bmp))
-            {
-
-                //create a color matrix object  
-                ColorMatrix matrix = new ColorMatrix();
-
-                //set the opacity  
-                matrix.Matrix33 = opacity;
-
-                //create image attributes  
-                ImageAttributes attributes = new ImageAttributes();
-
-                //set the color(opacity) of the image  
-                attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-
-                var opacityRect = new Rectangle(20, 65, bmp.Width - 40, bmp.Height - 110);
-
-                gfx.FillRectangle(Brushes.White, opacityRect);
-
-                //now draw the image  
-                gfx.DrawImage(image, opacityRect, opacityRect.X, opacityRect.Y, opacityRect.Width, opacityRect.Height, GraphicsUnit.Pixel, attributes);
-            }
-            return bmp;
         }
     }
 }
