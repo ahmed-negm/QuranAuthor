@@ -48,6 +48,7 @@ namespace QuranAuthor.ViewModels
         private DelegateCommand newExpCommand;
         private DelegateCommand exportExpCommand;
         private DelegateCommand importExpCommand;
+        private DelegateCommand orderCommand;
 
         #endregion
 
@@ -340,6 +341,18 @@ namespace QuranAuthor.ViewModels
             }
         }
 
+        public ICommand OrderCommand
+        {
+            get
+            {
+                if (orderCommand == null)
+                {
+                    orderCommand = new DelegateCommand(OrderSnippets, CanOrderSnippets);
+                }
+                return orderCommand;
+            }
+        }
+
         #endregion
 
         #region Public Methods
@@ -413,6 +426,20 @@ namespace QuranAuthor.ViewModels
             this.snippetRepository.Swap(this.Snippet, this.Snippets[index + 1]);
             LoadSnippets();
             this.Snippet = this.Snippets[index + 1];
+        }
+
+        private bool CanOrderSnippets()
+        {
+            return this.Snippets.Count > 0;
+        }
+
+        private void OrderSnippets()
+        {
+            for (int i = 0; i < this.Snippets.Count; i++)
+            {
+                this.snippetRepository.UpdateOrder(this.Snippets[i].Id, i);
+            }
+            UIHelper.MessageBox("تم الترتيب بنجاح.");
         }
 
         private bool CanDeleteExplanation()

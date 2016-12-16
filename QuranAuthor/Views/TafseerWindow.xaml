@@ -26,6 +26,7 @@
                 <Button Command="{Binding DeleteCommand}" Width="50" Margin="0,0,5,0" Content="حذف"/>
                 <Button Command="{Binding UpCommand}" Width="50" Margin="0,0,5,0" Content="فوق"/>
                 <Button Command="{Binding DownCommand}" Width="50" Margin="0,0,5,0" Content="تحت"/>
+                <Button Command="{Binding OrderCommand}" Width="50" Margin="0,0,5,0" Content="ترتيب"/>
                 <Controls:Numeric x:Name="numPage" Step="1" />
             </StackPanel>
             <ComboBox ItemsSource="{Binding Chapters}" DisplayMemberPath="Name" SelectedItem="{Binding Chapter}" HorizontalAlignment="Right" Width="120" />

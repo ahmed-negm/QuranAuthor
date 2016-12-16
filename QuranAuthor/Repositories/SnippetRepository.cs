@@ -144,7 +144,7 @@ namespace QuranAuthor.Repositories
             transaction.Commit();
         }
 
-        private void UpdateOrder(string id, int order)
+        public void UpdateOrder(string id, int order)
         {
             string sql = "UPDATE snippets SET [order]=@order WHERE Id=@Id";
 
