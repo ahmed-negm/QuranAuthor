@@ -1,4 +1,5 @@
-﻿using QuranAuthor.Commands;
+﻿using Newtonsoft.Json;
+using QuranAuthor.Commands;
 using QuranAuthor.Helps;
 using QuranAuthor.Models;
 using QuranAuthor.Repositories;
@@ -517,10 +518,8 @@ namespace QuranAuthor.ViewModels
 
         private void ExportExplanation()
         {
-            /*
-            var json = new JavaScriptSerializer().Serialize(this.Explanations);
+            var json = JsonConvert.SerializeObject(this.Explanations);
             UIHelper.SaveToFile(json);
-            */ 
         }
 
         private bool CanImportExplanation()
@@ -530,13 +529,13 @@ namespace QuranAuthor.ViewModels
 
         private void ImportExplanation()
         {
-            /*
+            
             var json = UIHelper.OpenFile();
             if (!string.IsNullOrEmpty(json))
             {
                 try
                 {
-                    var newExplanations = new JavaScriptSerializer().Deserialize<IList<Explanation>>(json);
+                    var newExplanations = JsonConvert.DeserializeObject<IList<Explanation>>(json);
                     int order = this.Explanations.Count;
                     foreach (var newExp in newExplanations)
                     {
@@ -557,7 +556,7 @@ namespace QuranAuthor.ViewModels
                     UIHelper.MessageBox("Can't Import file: " + ex.Message);
                 }
             }
-            */
+            
         }
 
         #endregion

@@ -1,4 +1,5 @@
-﻿using QuranAuthor.Commands;
+﻿using Newtonsoft.Json;
+using QuranAuthor.Commands;
 using QuranAuthor.Helps;
 using QuranAuthor.Models;
 using QuranAuthor.Repositories;
@@ -630,13 +631,12 @@ namespace QuranAuthor.ViewModels
 
         private void ImportExplanation()
         {
-            /*
             var json = UIHelper.OpenFile();
             if (!string.IsNullOrEmpty(json))
             {
                 try
                 {
-                    var newExplanations = new JavaScriptSerializer().Deserialize<IList<Explanation>>(json);
+                    var newExplanations = JsonConvert.DeserializeObject<IList<Explanation>>(json);
                     int order = this.Explanations.Count;
                     foreach (var newExp in newExplanations)
                     {
@@ -657,7 +657,6 @@ namespace QuranAuthor.ViewModels
                     UIHelper.MessageBox("Can't Import file: " + ex.Message);
                 }
             }
-            */ 
         }
 
         private bool CanExportExplanation()
@@ -667,10 +666,8 @@ namespace QuranAuthor.ViewModels
 
         private void ExportExplanation()
         {
-            /*
-            var json = new JavaScriptSerializer().Serialize(this.Explanations);
+            var json = JsonConvert.SerializeObject(this.Explanations);
             UIHelper.SaveToFile(json);
-            */ 
         }
 
         private bool CanDeleteSimilar()
@@ -728,13 +725,12 @@ namespace QuranAuthor.ViewModels
 
         private void ImportSimilar()
         {
-            /*
             var json = UIHelper.OpenFile();
             if (!string.IsNullOrEmpty(json))
             {
                 try
                 {
-                    var newSimilars = new JavaScriptSerializer().Deserialize<IList<Snippet>>(json);
+                    var newSimilars = JsonConvert.DeserializeObject<IList<Snippet>>(json);
                     int order = this.SimilarSnippets.Count;
                     foreach (var newExp in newSimilars)
                     {
@@ -763,7 +759,6 @@ namespace QuranAuthor.ViewModels
                     UIHelper.MessageBox("Can't Import file: " + ex.Message);
                 }
             }
-            */
         }
 
         private bool CanExportSimilar()
@@ -773,10 +768,8 @@ namespace QuranAuthor.ViewModels
 
         private void ExportSimilar()
         {
-            /*
-            var json = new JavaScriptSerializer().Serialize(this.SimilarSnippets);
+            var json = JsonConvert.SerializeObject(this.SimilarSnippets);
             UIHelper.SaveToFile(json);
-            */ 
         }
 
         #endregion
