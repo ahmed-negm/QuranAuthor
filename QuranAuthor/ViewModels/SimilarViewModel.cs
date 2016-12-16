@@ -495,10 +495,13 @@ namespace QuranAuthor.ViewModels
 
         private void DeleteSnippet()
         {
-            int index = this.Snippets.IndexOf(this.Snippet);
-            this.snippetRepository.Delete(this.Snippet.Id);
-            LoadSnippets();
-            this.Snippet = this.Snippets.Count > index ? this.Snippets[index] : null;
+            if (UIHelper.Ask("هل تريد حذف هذا العنصر؟"))
+            {
+                int index = this.Snippets.IndexOf(this.Snippet);
+                this.snippetRepository.Delete(this.Snippet.Id);
+                LoadSnippets();
+                this.Snippet = this.Snippets.Count > index ? this.Snippets[index] : null;
+            }
         }
 
         private bool CanUpSnippet()
@@ -552,12 +555,15 @@ namespace QuranAuthor.ViewModels
 
         private void DeleteExplanation()
         {
-            this.suspendEvents = true;
-            int index = this.Explanations.IndexOf(this.Explanation);
-            this.explanationRepository.Delete(this.Explanation.Id);
-            this.LoadExplanations();
-            this.Explanation = this.Explanations.Count > index ? this.Explanations[index] : null;
-            this.suspendEvents = false;
+            if (UIHelper.Ask("هل تريد حذف هذا العنصر؟"))
+            {
+                this.suspendEvents = true;
+                int index = this.Explanations.IndexOf(this.Explanation);
+                this.explanationRepository.Delete(this.Explanation.Id);
+                this.LoadExplanations();
+                this.Explanation = this.Explanations.Count > index ? this.Explanations[index] : null;
+                this.suspendEvents = false;
+            }
         }
 
         private bool CanUpExplanation()
@@ -647,12 +653,15 @@ namespace QuranAuthor.ViewModels
 
         private void DeleteSimilar()
         {
-            this.suspendEvents = true;
-            int index = this.SimilarSnippets.IndexOf(this.SimilarSnippet);
-            this.snippetRepository.Delete(this.SimilarSnippet.Id);
-            this.LoadSimilarSnippets();
-            this.SimilarSnippet = this.SimilarSnippets.Count > index ? this.SimilarSnippets[index] : null;
-            this.suspendEvents = false;
+            if (UIHelper.Ask("هل تريد حذف هذا العنصر؟"))
+            {
+                this.suspendEvents = true;
+                int index = this.SimilarSnippets.IndexOf(this.SimilarSnippet);
+                this.snippetRepository.Delete(this.SimilarSnippet.Id);
+                this.LoadSimilarSnippets();
+                this.SimilarSnippet = this.SimilarSnippets.Count > index ? this.SimilarSnippets[index] : null;
+                this.suspendEvents = false;
+            }
         }
 
         private bool CanUpSimilar()

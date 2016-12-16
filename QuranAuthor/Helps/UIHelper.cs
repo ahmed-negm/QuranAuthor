@@ -15,6 +15,12 @@ namespace QuranAuthor.Helps
             System.Windows.MessageBox.Show(message);
         }
 
+        public static bool Ask(string message)
+        {
+            var result = System.Windows.MessageBox.Show(message, "", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            return result == MessageBoxResult.Yes;
+        }
+
         public static void SaveToFile(string content)
         {
             Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();

@@ -380,10 +380,13 @@ namespace QuranAuthor.ViewModels
 
         private void DeleteSnippet()
         {
-            int index = this.Snippets.IndexOf(this.Snippet);
-            this.snippetRepository.Delete(this.Snippet.Id);
-            LoadSnippets();
-            this.Snippet = this.Snippets.Count > index ? this.Snippets[index] : null;
+            if (UIHelper.Ask("هل تريد حذف هذا العنصر؟"))
+            {
+                int index = this.Snippets.IndexOf(this.Snippet);
+                this.snippetRepository.Delete(this.Snippet.Id);
+                LoadSnippets();
+                this.Snippet = this.Snippets.Count > index ? this.Snippets[index] : null;
+            }
         }
 
         private bool CanUpSnippet()
@@ -419,12 +422,15 @@ namespace QuranAuthor.ViewModels
 
         private void DeleteExplanation()
         {
-            this.suspendExplanationEvents = true;
-            int index = this.Explanations.IndexOf(this.Explanation);
-            this.explanationRepository.Delete(this.Explanation.Id);
-            LoadExplanations();
-            this.Explanation = this.Explanations.Count > index ? this.Explanations[index] : null;
-            this.suspendExplanationEvents = false;
+            if (UIHelper.Ask("هل تريد حذف هذا العنصر؟"))
+            {
+                this.suspendExplanationEvents = true;
+                int index = this.Explanations.IndexOf(this.Explanation);
+                this.explanationRepository.Delete(this.Explanation.Id);
+                LoadExplanations();
+                this.Explanation = this.Explanations.Count > index ? this.Explanations[index] : null;
+                this.suspendExplanationEvents = false;
+            }
         }
 
         private bool CanUpExplanation()

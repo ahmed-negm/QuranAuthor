@@ -109,15 +109,23 @@ namespace QuranAuthor.Repositories
 
         public void Delete(string id)
         {
-            string sql = "DELETE FROM snippets WHERE Id=@Id";
-
             var transaction = Connection.BeginTransaction();
 
-            SQLiteCommand command = new SQLiteCommand(sql, Connection);
-
+            string sql = "DELETE FROM snippets WHERE Id=@Id";
+            var command = new SQLiteCommand(sql, Connection);
             command.Parameters.AddWithValue("@Id", id);
-
             command.ExecuteNonQuery();
+
+            sql = "DELETE FROM snippets WHERE ParentId=@Id";
+            command = new SQLiteCommand(sql, Connection);
+            command.Parameters.AddWithValue("@Id", id);
+            command.ExecuteNonQuery();
+
+            sql = "DELETE FROM explanations WHERE snippetid = @Id";
+            command = new SQLiteCommand(sql, Connection);
+            command.Parameters.AddWithValue("@Id", id);
+            command.ExecuteNonQuery();
+
             transaction.Commit();
         }
 
