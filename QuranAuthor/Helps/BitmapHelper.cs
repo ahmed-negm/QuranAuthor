@@ -22,8 +22,7 @@ namespace QuranAuthor.Helps
         private static Pen explainBorderPen = new Pen(Color.FromArgb(255, 112, 173, 71), 2);
         private static Pen noteBorderPen = new Pen(Color.FromArgb(255, 191, 191, 191), 2);
         private static Pen guideBorderPen = new Pen(Color.FromArgb(255, 255, 165, 0), 2);
-        private static Pen similarBorderPen = new Pen(Color.FromArgb(255, 0, 0, 0), 1);
-        private static Brush similarBorderBrush = new SolidBrush(Color.FromArgb(255, 112, 173, 71));
+        private static Pen similarBorderPen = new Pen(Color.FromArgb(255, 112, 173, 71), 4);
         private static Brush explainBrush = new SolidBrush(Color.FromArgb(255, 0, 112, 192));
         private static Brush noteBrush = new SolidBrush(Color.Black);
         private static Brush guideBrush = new SolidBrush(Color.FromArgb(255, 255, 165, 0));
@@ -125,41 +124,6 @@ namespace QuranAuthor.Helps
             return bmp;
         }
 
-        public static Bitmap RemoveAroundSelection(Bitmap bitmap, Snippet snippet)
-        {
-            Color transparent = Color.FromArgb(0, 255, 255, 255);
-            var startY = 100 + ((snippet.StartLine - 1) * 104);
-            var endY = 100 + ((snippet.EndLine) * 104);
-            for (int y = 0; y < 1717; y++)
-            {
-                for (int x = 0; x < 1058; x++)
-                {
-                    if (y < startY || y > endY)
-                    {
-                        bitmap.SetPixel(x, y, transparent);
-                    }
-                }
-            }
-
-            for (int y = startY; y <= startY + 104; y++)
-            {
-                for (int x = snippet.StartPoint; x < 1058; x++)
-                {
-                    bitmap.SetPixel(x, y, transparent);
-                }
-            }
-
-            for (int y = endY; y >= endY - 104; y--)
-            {
-                for (int x = 0; x <= snippet.EndPoint; x++)
-                {
-                    bitmap.SetPixel(x, y, transparent);
-                }
-            }
-
-            return bitmap;
-        }
-
         public static BitmapImage BitmapToImageSource(Bitmap page)
         {
             using (MemoryStream memory = new MemoryStream())
@@ -242,8 +206,8 @@ namespace QuranAuthor.Helps
                     var similarImage = GetSimilarImage(snippet, drawSnippet);
                     var rect = new Rectangle(20, snippet.Top, similarImage.Width, similarImage.Height);
                     var smallerRect = new Rectangle(24, snippet.Top + 4, similarImage.Width - 8, similarImage.Height - 8);
-                    g.FillRectangle(similarBorderBrush, rect);
-                    g.FillRectangle(Brushes.White, smallerRect);
+                    g.FillRectangle(Brushes.White, rect);
+                    g.DrawRectangle(similarBorderPen, rect);
                     g.DrawImage(similarImage,
                                 rect,
                                 new Rectangle(0, 0, similarImage.Width, similarImage.Height),
@@ -264,7 +228,7 @@ namespace QuranAuthor.Helps
             Bitmap snippetPage = null;
             if (drawSnippet)
             {
-                snippetPage = RemoveAroundSelection((Bitmap)page.Clone(), snippet);
+                snippetPage = FocusSelection((Bitmap)page.Clone(), snippet);
                 snippetPage = ResizeImage(snippetPage, 78, 130);
             }
             var iconImage = new Bitmap(Path.Combine(iconsPath, "OpenBook.png"));
