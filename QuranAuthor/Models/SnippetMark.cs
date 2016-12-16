@@ -27,7 +27,7 @@ namespace QuranAuthor.Models
 
         public override string ToString()
         {
-            return this.Line + " (" + this.StartPoint + " , " + this.EndPoint + ")";
+            return this.Id;
         }
     }
 }

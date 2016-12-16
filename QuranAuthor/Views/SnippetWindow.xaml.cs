@@ -3,6 +3,8 @@ using QuranAuthor.Models;
 using QuranAuthor.Repositories;
 using QuranAuthor.Services;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -21,12 +23,16 @@ namespace QuranAuthor.Views
         private bool suspendEvents = false;
         public Bitmap Page { get; set; }
         public Snippet Snippet { get; set; }
+        public ObservableCollection<SnippetMark> Marks { get; set; }
+        public SnippetMark Mark { get; set; }
 
         public SnippetWindow()
         {
             InitializeComponent();
             this.clipboardHelper = new ClipboardHelper(this);
             this.clipboardHelper.ItemCopied += ClipboardHelper_ItemCopied;
+            this.Marks = new ObservableCollection<SnippetMark>();
+            this.marksLst.ItemsSource = this.Marks;
             tabControl.Visibility = System.Windows.Visibility.Hidden;
         }
 
@@ -106,6 +112,79 @@ namespace QuranAuthor.Views
         {
             this.Page = BitmapHelper.FocusSelection((Bitmap)originalPage.Clone(), Snippet);
             imgPage.Source = BitmapHelper.BitmapToImageSource(this.Page);
+        }
+
+        private void Mark_ValueChanged(object sender, EventArgs e)
+        {
+            var index = this.marksLst.SelectedIndex;
+            if (index < 0 || this.suspendEvents)
+            {
+                return;
+            }
+            this.Marks[index].Line = this.markLine.Value;
+            this.Marks[index].StartPoint = this.markStart.Value;
+            this.Marks[index].EndPoint = this.markEnd.Value;
+        }
+
+        private void NewMark_Click(object sender, RoutedEventArgs e)
+        {
+            var mark = new SnippetMark();
+            mark.SnippetId = this.Snippet.Id;
+            this.Marks.Add(mark);
+            this.marksLst.SelectedIndex = this.Marks.Count - 1;
+        }
+
+        private void DeleteMark_Click(object sender, RoutedEventArgs e)
+        {
+            var index = this.marksLst.SelectedIndex;
+            if (index < 0)
+            {
+                return;
+            }
+            if (UIHelper.Ask("هل تريد حذف هذا العنصر؟"))
+            {
+                this.Marks.RemoveAt(index);
+            }
+        }
+
+        private void UpMark_Click(object sender, RoutedEventArgs e)
+        {
+            var index = this.marksLst.SelectedIndex;
+            if (index <= 0)
+            {
+                return;
+            }
+            var selected = this.Marks[index];
+            this.Marks[index] = this.Marks[index - 1];
+            this.Marks[index - 1] = selected;
+            this.marksLst.SelectedIndex = index - 1;
+        }
+
+        private void DownMark_Click(object sender, RoutedEventArgs e)
+        {
+            var index = this.marksLst.SelectedIndex;
+            if(index >= this.Marks.Count - 1)
+            {
+                return;
+            }
+            var selected = this.Marks[index];
+            this.Marks[index] = this.Marks[index + 1];
+            this.Marks[index + 1] = selected;
+            this.marksLst.SelectedIndex = index + 1;
+        }
+
+        private void MarkList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var index = this.marksLst.SelectedIndex;
+            if (index < 0)
+            {
+                return;
+            }
+            this.suspendEvents = true;
+            this.markLine.Value = this.Marks[index].Line;
+            this.markStart.Value = this.Marks[index].StartPoint;
+            this.markEnd.Value = this.Marks[index].EndPoint;
+            this.suspendEvents = false;
         }
     }
 }
