@@ -126,6 +126,11 @@ namespace QuranAuthor.Repositories
             command.Parameters.AddWithValue("@Id", id);
             command.ExecuteNonQuery();
 
+            sql = "DELETE FROM snippetmarks WHERE snippetid = @Id";
+            command = new SQLiteCommand(sql, Connection);
+            command.Parameters.AddWithValue("@Id", id);
+            command.ExecuteNonQuery();
+
             transaction.Commit();
         }
 
