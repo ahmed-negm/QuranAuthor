@@ -21,18 +21,19 @@ namespace QuranAuthor.Views
         private SnippetService snippetService = new SnippetService();
         private Bitmap originalPage;
         private bool suspendEvents = false;
-        public Bitmap Page { get; set; }
+        private Bitmap page;
+        private ObservableCollection<SnippetMark> marks;
+        private SnippetMark mark;
+
         public Snippet Snippet { get; set; }
-        public ObservableCollection<SnippetMark> Marks { get; set; }
-        public SnippetMark Mark { get; set; }
 
         public SnippetWindow()
         {
             InitializeComponent();
             this.clipboardHelper = new ClipboardHelper(this);
             this.clipboardHelper.ItemCopied += ClipboardHelper_ItemCopied;
-            this.Marks = new ObservableCollection<SnippetMark>();
-            this.marksLst.ItemsSource = this.Marks;
+            this.marks = new ObservableCollection<SnippetMark>();
+            this.marksLst.ItemsSource = this.marks;
             tabControl.Visibility = System.Windows.Visibility.Hidden;
         }
 
@@ -72,6 +73,7 @@ namespace QuranAuthor.Views
         private void Done_Click(object sender, RoutedEventArgs e)
         {
             this.Snippet.Text = txtVerse.Text.Trim();
+            this.Snippet.Marks = this.marks;
             this.DialogResult = true;
         }
 
@@ -110,8 +112,8 @@ namespace QuranAuthor.Views
 
         private void RenderSelection()
         {
-            this.Page = BitmapHelper.FocusSelection((Bitmap)originalPage.Clone(), Snippet);
-            imgPage.Source = BitmapHelper.BitmapToImageSource(this.Page);
+            this.page = BitmapHelper.FocusSelection((Bitmap)originalPage.Clone(), Snippet);
+            imgPage.Source = BitmapHelper.BitmapToImageSource(this.page);
         }
 
         private void Mark_ValueChanged(object sender, EventArgs e)
@@ -121,17 +123,17 @@ namespace QuranAuthor.Views
             {
                 return;
             }
-            this.Marks[index].Line = this.markLine.Value;
-            this.Marks[index].StartPoint = this.markStart.Value;
-            this.Marks[index].EndPoint = this.markEnd.Value;
+            this.marks[index].Line = this.markLine.Value;
+            this.marks[index].StartPoint = this.markStart.Value;
+            this.marks[index].EndPoint = this.markEnd.Value;
         }
 
         private void NewMark_Click(object sender, RoutedEventArgs e)
         {
             var mark = new SnippetMark();
             mark.SnippetId = this.Snippet.Id;
-            this.Marks.Add(mark);
-            this.marksLst.SelectedIndex = this.Marks.Count - 1;
+            this.marks.Add(mark);
+            this.marksLst.SelectedIndex = this.marks.Count - 1;
         }
 
         private void DeleteMark_Click(object sender, RoutedEventArgs e)
@@ -143,7 +145,7 @@ namespace QuranAuthor.Views
             }
             if (UIHelper.Ask("هل تريد حذف هذا العنصر؟"))
             {
-                this.Marks.RemoveAt(index);
+                this.marks.RemoveAt(index);
             }
         }
 
@@ -154,22 +156,22 @@ namespace QuranAuthor.Views
             {
                 return;
             }
-            var selected = this.Marks[index];
-            this.Marks[index] = this.Marks[index - 1];
-            this.Marks[index - 1] = selected;
+            var selected = this.marks[index];
+            this.marks[index] = this.marks[index - 1];
+            this.marks[index - 1] = selected;
             this.marksLst.SelectedIndex = index - 1;
         }
 
         private void DownMark_Click(object sender, RoutedEventArgs e)
         {
             var index = this.marksLst.SelectedIndex;
-            if(index >= this.Marks.Count - 1)
+            if(index >= this.marks.Count - 1)
             {
                 return;
             }
-            var selected = this.Marks[index];
-            this.Marks[index] = this.Marks[index + 1];
-            this.Marks[index + 1] = selected;
+            var selected = this.marks[index];
+            this.marks[index] = this.marks[index + 1];
+            this.marks[index + 1] = selected;
             this.marksLst.SelectedIndex = index + 1;
         }
 
@@ -181,9 +183,9 @@ namespace QuranAuthor.Views
                 return;
             }
             this.suspendEvents = true;
-            this.markLine.Value = this.Marks[index].Line;
-            this.markStart.Value = this.Marks[index].StartPoint;
-            this.markEnd.Value = this.Marks[index].EndPoint;
+            this.markLine.Value = this.marks[index].Line;
+            this.markStart.Value = this.marks[index].StartPoint;
+            this.markEnd.Value = this.marks[index].EndPoint;
             this.suspendEvents = false;
         }
     }

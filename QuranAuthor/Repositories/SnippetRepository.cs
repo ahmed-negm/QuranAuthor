@@ -19,13 +19,12 @@ namespace QuranAuthor.Repositories
         {
             base.Type = 1;
         }
-
-
     }
 
     public abstract class SnippetRepository : Repository
     {
         protected int Type { get; set; }
+        private SnippetMarkRepository markRepository = new SnippetMarkRepository();
 
         public List<Snippet> GetSnippets(int chapterId, int page)
         {
@@ -44,6 +43,11 @@ namespace QuranAuthor.Repositories
                 snippets.Add(new Snippet(reader));
             }
 
+            foreach (var snippet in snippets)
+            {
+                snippet.Marks = this.markRepository.GetMarks(snippet.Id);
+            }
+
             return snippets;
         }
 
@@ -60,6 +64,11 @@ namespace QuranAuthor.Repositories
             while (reader.Read())
             {
                 snippets.Add(new Snippet(reader));
+            }
+
+            foreach (var snippet in snippets)
+            {
+                snippet.Marks = this.markRepository.GetMarks(snippet.Id);
             }
 
             return snippets;
@@ -109,6 +118,8 @@ namespace QuranAuthor.Repositories
 
         public void Delete(string id)
         {
+            var subSnippets = GetSnippetsByParentId(id);
+
             var transaction = Connection.BeginTransaction();
 
             string sql = "DELETE FROM snippets WHERE Id=@Id";
@@ -130,6 +141,14 @@ namespace QuranAuthor.Repositories
             command = new SQLiteCommand(sql, Connection);
             command.Parameters.AddWithValue("@Id", id);
             command.ExecuteNonQuery();
+
+            foreach (var snippet in subSnippets)
+            {
+                sql = "DELETE FROM snippetmarks WHERE snippetid = @Id";
+                command = new SQLiteCommand(sql, Connection);
+                command.Parameters.AddWithValue("@Id", snippet.Id);
+                command.ExecuteNonQuery();
+            }
 
             transaction.Commit();
         }

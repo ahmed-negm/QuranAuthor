@@ -22,6 +22,7 @@ namespace QuranAuthor.ViewModels
         private ChapterRepository chapterRepository = new ChapterRepository();
         private SimilarSnippetsRepository snippetRepository = new SimilarSnippetsRepository();
         private ExplanationRepository explanationRepository = new ExplanationRepository();
+        private SnippetMarkRepository markRepository = new SnippetMarkRepository();
 
         // Private properties
         private Chapter chapter;
@@ -463,6 +464,11 @@ namespace QuranAuthor.ViewModels
 
             snippet.Order = this.Snippets.Count;
             this.snippetRepository.AddSnippet(snippet);
+            foreach (var mark in snippet.Marks)
+            {
+                mark.SnippetId = snippet.Id;
+                this.markRepository.AddMark(mark);
+            }
             this.LoadSnippets();
             this.Snippet = this.Snippets[this.Snippets.Count - 1];
         }
@@ -472,6 +478,11 @@ namespace QuranAuthor.ViewModels
             snippet.Order = this.SimilarSnippets.Count;
             snippet.ParentId = this.Snippet.Id;
             this.snippetRepository.AddSnippet(snippet);
+            foreach (var mark in snippet.Marks)
+            {
+                mark.SnippetId = snippet.Id;
+                this.markRepository.AddMark(mark);
+            }
             this.LoadSimilarSnippets();
             this.SimilarSnippet = this.SimilarSnippets[this.SimilarSnippets.Count - 1];
         }

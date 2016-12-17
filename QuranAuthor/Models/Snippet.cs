@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 
 namespace QuranAuthor.Models
@@ -20,10 +21,12 @@ namespace QuranAuthor.Models
         public string Rtf { get; set; }
         public int Top { get; set; }
         public string ParentId { get; set; }
+        public IList<SnippetMark> Marks { get; set; }
 
         public Snippet()
         {
             this.Id = Guid.NewGuid().ToString();
+            this.Marks = new List<SnippetMark>();
         }
 
         public Snippet(DbDataReader reader)
