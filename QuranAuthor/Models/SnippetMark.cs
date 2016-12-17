@@ -14,6 +14,9 @@ namespace QuranAuthor.Models
         public SnippetMark()
         {
             this.Id = Guid.NewGuid().ToString();
+            this.Line = 1;
+            this.StartPoint = 100;
+            this.EndPoint = 400;
         }
 
         public SnippetMark(DbDataReader reader)

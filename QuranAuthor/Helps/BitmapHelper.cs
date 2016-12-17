@@ -33,6 +33,23 @@ namespace QuranAuthor.Helps
         private static Font font22 = new Font(fontName, 22);
         private static StringFormat rightToLeftStringFormat = new StringFormat(StringFormatFlags.DirectionRightToLeft);
         private static Dictionary<string, Bitmap> icons = new Dictionary<string, Bitmap>();
+        private static ImageAttributes alphaAttributes = new ImageAttributes();
+        private static ImageAttributes orangeAttributes = new ImageAttributes();
+
+        static BitmapHelper()
+        {
+            var alphaMatrix = new ColorMatrix();
+            alphaMatrix.Matrix33 = 0.2F;
+            alphaAttributes.SetColorMatrix(alphaMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
+            var orangeMatrix = new ColorMatrix(new float[][]{ 
+                   new float[] {1,  0,  0,  0, 0},        
+                   new float[] {0,  1,  0,  0, 0},        
+                   new float[] {0,  0,  1,  0, 0},        
+                   new float[] {0,  0,  0,  1, 0},        
+                   new float[] {1,  0.1F,  0,  0, 1}});
+            orangeAttributes.SetColorMatrix(orangeMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+        }
 
         public static SnippetSelection GetSnippetSelection(Bitmap bitmap)
         {
@@ -87,38 +104,33 @@ namespace QuranAuthor.Helps
             //create a graphics object from the image  
             using (Graphics gfx = Graphics.FromImage(bmp))
             {
-
-                //create a color matrix object  
-                ColorMatrix matrix = new ColorMatrix();
-
-                //set the opacity  
-                matrix.Matrix33 = 0.2F;
-
-                //create image attributes  
-                ImageAttributes attributes = new ImageAttributes();
-
-                //set the color(opacity) of the image  
-                attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-
+                
                 // Upper Part
                 var opacityRect = new Rectangle(20, 65, bmp.Width - 40, startY - 65);
                 gfx.FillRectangle(Brushes.White, opacityRect);
-                gfx.DrawImage(bitmap, opacityRect, opacityRect.X, opacityRect.Y, opacityRect.Width, opacityRect.Height, GraphicsUnit.Pixel, attributes);
+                gfx.DrawImage(bitmap, opacityRect, opacityRect.X, opacityRect.Y, opacityRect.Width, opacityRect.Height, GraphicsUnit.Pixel, alphaAttributes);
 
                 // Lower Part
                 opacityRect = new Rectangle(20, endY, bmp.Width - 40, bmp.Height - endY - 45);
                 gfx.FillRectangle(Brushes.White, opacityRect);
-                gfx.DrawImage(bitmap, opacityRect, opacityRect.X, opacityRect.Y, opacityRect.Width, opacityRect.Height, GraphicsUnit.Pixel, attributes);
+                gfx.DrawImage(bitmap, opacityRect, opacityRect.X, opacityRect.Y, opacityRect.Width, opacityRect.Height, GraphicsUnit.Pixel, alphaAttributes);
 
                 // Right Part
                 opacityRect = new Rectangle(snippet.StartPoint, startY, bmp.Width - snippet.StartPoint - 40, 104);
                 gfx.FillRectangle(Brushes.White, opacityRect);
-                gfx.DrawImage(bitmap, opacityRect, opacityRect.X, opacityRect.Y, opacityRect.Width, opacityRect.Height, GraphicsUnit.Pixel, attributes);
+                gfx.DrawImage(bitmap, opacityRect, opacityRect.X, opacityRect.Y, opacityRect.Width, opacityRect.Height, GraphicsUnit.Pixel, alphaAttributes);
 
                 // Left Part
                 opacityRect = new Rectangle(20, endY - 104, snippet.EndPoint, 104);
                 gfx.FillRectangle(Brushes.White, opacityRect);
-                gfx.DrawImage(bitmap, opacityRect, opacityRect.X, opacityRect.Y, opacityRect.Width, opacityRect.Height, GraphicsUnit.Pixel, attributes);
+                gfx.DrawImage(bitmap, opacityRect, opacityRect.X, opacityRect.Y, opacityRect.Width, opacityRect.Height, GraphicsUnit.Pixel, alphaAttributes);
+
+                foreach (var mark in snippet.Marks)
+                {
+                    var startmark = 100 + ((mark.Line + snippet.StartLine - 2) * 104);
+                    var markRect = new Rectangle(mark.StartPoint, startmark, mark.EndPoint - mark.StartPoint, 104);
+                    gfx.DrawImage(bitmap, markRect, markRect.X, markRect.Y, markRect.Width, markRect.Height, GraphicsUnit.Pixel, orangeAttributes);
+                }
             }
 
             return bmp;
@@ -242,9 +254,19 @@ namespace QuranAuthor.Helps
                 g.DrawImage(page, new Rectangle(0, 0, target.Width - 40, target.Height),
                                  cropRect, GraphicsUnit.Pixel);
                 g.FillRectangle(Brushes.White, new Rectangle(snippet.StartPoint - 40, 0, target.Width - snippet.StartPoint + 40, 104));
-                g.FillRectangle(Brushes.White, new Rectangle(0, target.Height - 104, snippet.EndPoint - 40, 104));
+                g.FillRectangle(Brushes.White, new Rectangle(0, target.Height - 104, snippet.EndPoint - 20, 104));
             }
-
+            
+            using (Graphics g = Graphics.FromImage(target))
+            {
+                foreach (var mark in snippet.Marks)
+                {
+                    var startmark = ((mark.Line - 1) * 104);
+                    var markRect = new Rectangle(mark.StartPoint - 40, startmark, mark.EndPoint - mark.StartPoint, 104);
+                    g.DrawImage(target, markRect, markRect.X, markRect.Y, markRect.Width, markRect.Height, GraphicsUnit.Pixel, orangeAttributes);
+                }
+            }
+            
             target = ResizeImage(target, (int)(target.Width * 0.80), (int)(target.Height * 0.80));
 
             Bitmap result = new Bitmap(cropRect.Width + 40, Math.Max(target.Height + 10, 220));
