@@ -14,21 +14,21 @@ using System.Windows.Input;
 
 namespace QuranAuthor.ViewModels
 {
-    public class GenTafseerViewModel : ViewModelBase
+    public class GenSimilarViewModel : ViewModelBase
     {
         private ChapterRepository chapterRepository = new ChapterRepository();
-        private ExplanationSnippetsRepository snippetRepository = new ExplanationSnippetsRepository();
+        private SimilarSnippetsRepository snippetRepository = new SimilarSnippetsRepository();
         private ExplanationRepository explanationRepository = new ExplanationRepository();
 
         private Chapter startChapter;
         private Chapter endChapter;
         private bool multiChapters;
         private bool isIdle = true;
-        private string genPath = "E:\\Fun\\Tafseer\\Output\\Tafseer";
+        private string genPath = "E:\\Fun\\Tafseer\\Output\\Similar";
 
         private DelegateCommand genCommand;
 
-        public GenTafseerViewModel()
+        public GenSimilarViewModel()
         {
             this.StartChapter = this.Chapters[38];
             this.EndChapter = this.Chapters[38];
@@ -152,10 +152,13 @@ namespace QuranAuthor.ViewModels
                     var page = BitmapHelper.LoadPage(p);
                     foreach (var snippet in snippets)
                     {
-                        var snippetPage = BitmapHelper.FocusSelection((Bitmap)page.Clone(), snippet);
                         var explanations = this.explanationRepository.GetExplanations(snippet.Id);
-                        var finalPage = BitmapHelper.DrawExplanation(snippetPage, explanations);
-                        finalPage.Save(Path.Combine(chapterPath, this.GetFileName(pageIndex) + ".png"));
+                        var similarSnippets = this.snippetRepository.GetSnippetsByParentId(snippet.Id);
+
+                        var snippetPage = BitmapHelper.FocusSelection((Bitmap)page.Clone(), snippet);
+                        snippetPage = BitmapHelper.DrawSmiliarExplanation(snippetPage, explanations);
+                        snippetPage = BitmapHelper.DrawSimilarSnippets(snippetPage, similarSnippets);
+                        snippetPage.Save(Path.Combine(chapterPath, this.GetFileName(pageIndex) + ".png"));
                         pageIndex++;
                     }
                 }

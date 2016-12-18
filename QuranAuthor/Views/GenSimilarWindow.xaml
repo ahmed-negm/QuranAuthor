@@ -1,0 +1,27 @@
+﻿<Window x:Class="QuranAuthor.Views.GenSimilarWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Export Tafseer"  Width="500" Height="300" FlowDirection="RightToLeft" WindowStartupLocation="CenterScreen"
+        FontSize="20" FontFamily="GE SS Text Light" Icon="../Icons/quran.ico">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+    </Window.Resources>
+    <Grid>
+        <TextBlock Foreground="OrangeRed" VerticalAlignment="Center" HorizontalAlignment="Center">من فضلك قم بالإنتظار</TextBlock>
+        <StackPanel Margin="10" Background="White" Visibility="{Binding IsIdle, Converter={StaticResource BoolToVisConverter}}">
+            <RadioButton x:Name="chkOneChapter" Margin="10" Content="تخريج سورة واحدة" IsChecked="True" />
+            <RadioButton Margin="10" Content="تخريج مجموعة من السور" IsChecked="{Binding MultiChapters}" />
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Label Visibility="{Binding MultiChapters, Converter={StaticResource BoolToVisConverter}}">من</Label>
+                <ComboBox ItemsSource="{Binding Chapters}" DisplayMemberPath="Name" SelectedItem="{Binding StartChapter}" HorizontalAlignment="Right" Width="120" />
+                <Label Visibility="{Binding MultiChapters, Converter={StaticResource BoolToVisConverter}}">الي</Label>
+                <ComboBox Visibility="{Binding MultiChapters, Converter={StaticResource BoolToVisConverter}}" ItemsSource="{Binding Chapters}" DisplayMemberPath="Name" SelectedItem="{Binding EndChapter}" HorizontalAlignment="Right" Width="120" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Label>فولدر التخريج:</Label>
+                <TextBox Text="{Binding GenPath}" TextAlignment="Right" Height="25" Width="330" />
+            </StackPanel>
+            <Button Command="{Binding GenCommand}" HorizontalAlignment="Right" Margin="10" Width="100">تخريج</Button>
+        </StackPanel>
+    </Grid>
+</Window>

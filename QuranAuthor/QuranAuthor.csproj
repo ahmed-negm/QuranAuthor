@@ -86,8 +86,12 @@
     <Compile Include="Repositories\VerseRepository.cs" />
     <Compile Include="Repositories\ChapterRepository.cs" />
     <Compile Include="Services\SnippetService.cs" />
+    <Compile Include="ViewModels\GenSimilarViewModel.cs" />
     <Compile Include="ViewModels\GenTafseerViewModel.cs" />
     <Compile Include="ViewModels\SimilarViewModel.cs" />
+    <Compile Include="Views\GenSimilarWindow.xaml.cs">
+      <DependentUpon>GenSimilarWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\GenTafseerWindow.xaml.cs">
       <DependentUpon>GenTafseerWindow.xaml</DependentUpon>
     </Compile>
@@ -105,6 +109,10 @@
     <Page Include="Controls\Numeric.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GenSimilarWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\GenTafseerWindow.xaml">
       <SubType>Designer</SubType>

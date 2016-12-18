@@ -31,7 +31,7 @@ namespace QuranAuthor.Helps
         private static Brush similarFocusBrush = new SolidBrush(Color.FromArgb(255, 255, 26, 0));
         private static Brush focusBrush;
         private static Brush chapterBrush = new SolidBrush(Color.FromArgb(255, 80, 80, 80));
-        
+
         private static Font font36 = new Font(fontName, 36);
         private static Font font32 = new Font(fontName, 32);
         private static Font font30 = new Font(fontName, 30);
@@ -112,7 +112,7 @@ namespace QuranAuthor.Helps
             //create a graphics object from the image  
             using (Graphics gfx = Graphics.FromImage(bmp))
             {
-                
+
                 // Upper Part
                 var opacityRect = new Rectangle(20, 65, bmp.Width - 40, startY - 65);
                 gfx.FillRectangle(Brushes.White, opacityRect);
@@ -239,13 +239,13 @@ namespace QuranAuthor.Helps
             return bitmap;
         }
 
-        public static Bitmap DrawSimilarSnippets(Bitmap bitmap, IList<Snippet> snippets, bool drawSnippet)
+        public static Bitmap DrawSimilarSnippets(Bitmap bitmap, IList<Snippet> snippets)
         {
             foreach (var snippet in snippets)
             {
                 using (Graphics g = Graphics.FromImage(bitmap))
                 {
-                    var similarImage = GetSimilarImage(snippet, drawSnippet);
+                    var similarImage = GetSimilarImage(snippet);
                     var rect = new Rectangle(20, snippet.Top, similarImage.Width, similarImage.Height);
                     var smallerRect = new Rectangle(24, snippet.Top + 4, similarImage.Width - 8, similarImage.Height - 8);
                     g.FillRectangle(Brushes.White, rect);
@@ -261,18 +261,16 @@ namespace QuranAuthor.Helps
             return bitmap;
         }
 
-        private static Bitmap GetSimilarImage(Snippet snippet, bool drawSnippet)
+        private static Bitmap GetSimilarImage(Snippet snippet)
         {
             var startY = 100 + ((snippet.StartLine - 1) * 104);
             var endY = 100 + ((snippet.EndLine) * 104);
 
             var page = LoadPage(snippet.Page);
-            Bitmap snippetPage = null;
-            if (drawSnippet)
-            {
-                snippetPage = FocusSelection((Bitmap)page.Clone(), snippet);
-                snippetPage = ResizeImage(snippetPage, 78, 130);
-            }
+
+            var snippetPage = FocusSelection((Bitmap)page.Clone(), snippet);
+            snippetPage = ResizeImage(snippetPage, 78, 130);
+
             var iconImage = new Bitmap(Path.Combine(iconsPath, "OpenBook.png"));
 
             Rectangle cropRect = new Rectangle(40, startY, page.Width - 80, endY - startY);
@@ -286,7 +284,7 @@ namespace QuranAuthor.Helps
                 g.FillRectangle(Brushes.White, new Rectangle(snippet.StartPoint - 40, 0, target.Width - snippet.StartPoint + 40, 104));
                 g.FillRectangle(Brushes.White, new Rectangle(0, target.Height - 104, snippet.EndPoint - 20, 104));
             }
-            
+
             using (Graphics g = Graphics.FromImage(target))
             {
                 foreach (var mark in snippet.Marks)
@@ -296,7 +294,7 @@ namespace QuranAuthor.Helps
                     g.DrawImage(target, markRect, markRect.X, markRect.Y, markRect.Width, markRect.Height, GraphicsUnit.Pixel, orangeAttributes);
                 }
             }
-            
+
             target = ResizeImage(target, (int)(target.Width * 0.80), (int)(target.Height * 0.80));
 
             Bitmap result = new Bitmap(cropRect.Width + 40, Math.Max(target.Height + 10, 220));
@@ -314,11 +312,8 @@ namespace QuranAuthor.Helps
                 g.DrawImage(iconImage, new Rectangle(cropRect.Width + 20 - iconImage.Width, 20, iconImage.Width, iconImage.Height),
                                  new Rectangle(0, 0, iconImage.Width, iconImage.Height), GraphicsUnit.Pixel);
 
-                if (drawSnippet)
-                {
-                    g.DrawImage(snippetPage, new Rectangle(cropRect.Width + (snippet.Page % 2 == 1 ? 9 : -77) - snippetPage.Width, 32, snippetPage.Width, snippetPage.Height),
-                                     new Rectangle(4, 0, snippetPage.Width - 10, snippetPage.Height), GraphicsUnit.Pixel);
-                }
+                g.DrawImage(snippetPage, new Rectangle(cropRect.Width + (snippet.Page % 2 == 1 ? 9 : -77) - snippetPage.Width, 32, snippetPage.Width, snippetPage.Height),
+                                 new Rectangle(4, 0, snippetPage.Width - 10, snippetPage.Height), GraphicsUnit.Pixel);
 
                 var signature = GetSnippetSignature(snippet);
 
@@ -474,7 +469,7 @@ namespace QuranAuthor.Helps
             var text = explanation.Text;
             var ranges = Sansitize(ref text);
             var textRect = new RectangleF(31, explanation.Top + 12, width, height);
-            
+
             g.DrawString(text, font, brush, textRect, rightToLeftStringFormat);
 
 

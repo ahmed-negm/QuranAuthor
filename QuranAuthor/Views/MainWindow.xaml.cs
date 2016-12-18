@@ -29,6 +29,8 @@ namespace QuranAuthor.Views
 
         private void SimilarGen_Click(object sender, RoutedEventArgs e)
         {
+            var window = new GenSimilarWindow();
+            window.ShowDialog();
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
