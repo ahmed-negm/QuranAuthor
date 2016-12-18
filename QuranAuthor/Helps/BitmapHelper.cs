@@ -21,14 +21,19 @@ namespace QuranAuthor.Helps
         private static Color transparentColor = Color.FromArgb(0, 255, 255, 255);
         private static Pen explainBorderPen = new Pen(Color.FromArgb(255, 112, 173, 71), 2);
         private static Pen noteBorderPen = new Pen(Color.FromArgb(255, 191, 191, 191), 2);
+        private static Pen similarExplainPen = new Pen(Color.FromArgb(255, 80, 80, 80), 4);
         private static Pen guideBorderPen = new Pen(Color.FromArgb(255, 255, 165, 0), 2);
         private static Pen similarBorderPen = new Pen(Color.FromArgb(255, 112, 173, 71), 4);
         private static Brush explainBrush = new SolidBrush(Color.FromArgb(255, 0, 112, 192));
         private static Brush noteBrush = new SolidBrush(Color.Black);
         private static Brush guideBrush = new SolidBrush(Color.FromArgb(255, 255, 165, 0));
-        private static Brush focusBrush = new SolidBrush(Color.FromArgb(255, 132, 60, 12));
+        private static Brush tafseerFocusBrush = new SolidBrush(Color.FromArgb(255, 132, 60, 12));
+        private static Brush similarFocusBrush = new SolidBrush(Color.FromArgb(255, 255, 26, 0));
+        private static Brush focusBrush;
         private static Brush chapterBrush = new SolidBrush(Color.FromArgb(255, 80, 80, 80));
+        
         private static Font font36 = new Font(fontName, 36);
+        private static Font font32 = new Font(fontName, 32);
         private static Font font30 = new Font(fontName, 30);
         private static Font font22 = new Font(fontName, 22);
         private static StringFormat rightToLeftStringFormat = new StringFormat(StringFormatFlags.DirectionRightToLeft);
@@ -49,6 +54,9 @@ namespace QuranAuthor.Helps
                    new float[] {0,  0,  0,  1, 0},        
                    new float[] {1,  0.1F,  0,  0, 1}});
             orangeAttributes.SetColorMatrix(orangeMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
+            guideBorderPen.DashCap = System.Drawing.Drawing2D.DashCap.Round;
+            guideBorderPen.DashPattern = new float[] { 4.0F, 2.0F, 1.0F, 3.0F };
         }
 
         public static SnippetSelection GetSnippetSelection(Bitmap bitmap)
@@ -171,9 +179,6 @@ namespace QuranAuthor.Helps
             g.PixelOffsetMode = PixelOffsetMode.HighQuality;
             g.TextRenderingHint = TextRenderingHint.AntiAlias;
 
-            guideBorderPen.DashCap = System.Drawing.Drawing2D.DashCap.Round;
-            guideBorderPen.DashPattern = new float[] { 4.0F, 2.0F, 1.0F, 3.0F };
-
             foreach (var explanation in explanations)
             {
                 var font = explanation.Type == ExplanationType.Explain ? font36 : font30;
@@ -201,8 +206,33 @@ namespace QuranAuthor.Helps
                         g.DrawImage(GetIcon(explanation.Type, explanation.Icon), new Point(940, explanation.Top + 8));
                     }
                 }
-
+                focusBrush = tafseerFocusBrush;
                 DrawString(g, explanation, font, brush, height, width);
+            }
+
+            g.Flush();
+            return bitmap;
+        }
+
+        public static Bitmap DrawSmiliarExplanation(Bitmap bitmap, IList<Explanation> explanations)
+        {
+            var g = Graphics.FromImage(bitmap);
+
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            g.TextRenderingHint = TextRenderingHint.AntiAlias;
+
+            foreach (var explanation in explanations)
+            {
+                var width = 996;
+
+                var height = (int)g.MeasureString(explanation.Text, font30, new SizeF(width, 1000), rightToLeftStringFormat).Height;
+
+                g.FillRoundedRectangle(Brushes.White, new Rectangle(21, explanation.Top + 2, 1017, height + 20), 20);
+                g.DrawRoundedRectangle(similarExplainPen, new Rectangle(19, explanation.Top, 1021, height + 24), 20);
+                focusBrush = similarFocusBrush;
+                DrawString(g, explanation, font32, explainBrush, height, width);
             }
 
             g.Flush();
@@ -443,8 +473,8 @@ namespace QuranAuthor.Helps
         {
             var text = explanation.Text;
             var ranges = Sansitize(ref text);
-            var textRect = new RectangleF(71, explanation.Top + 12, width, height);
-
+            var textRect = new RectangleF(31, explanation.Top + 12, width, height);
+            
             g.DrawString(text, font, brush, textRect, rightToLeftStringFormat);
 
 
