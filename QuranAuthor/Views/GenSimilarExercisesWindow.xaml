@@ -1,7 +1,7 @@
-﻿<Window x:Class="QuranAuthor.Views.GenSimilarWindow"
+﻿<Window x:Class="QuranAuthor.Views.GenSimilarExercisesWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Export Similar"  Width="500" Height="300" FlowDirection="RightToLeft" WindowStartupLocation="CenterScreen"
+        Title="Export Similar Exercises"  Width="500" Height="300" FlowDirection="RightToLeft" WindowStartupLocation="CenterScreen"
         FontSize="20" FontFamily="GE SS Text Light" Icon="../Icons/quran.ico">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />

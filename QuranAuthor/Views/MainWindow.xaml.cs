@@ -33,6 +33,12 @@ namespace QuranAuthor.Views
             window.ShowDialog();
         }
 
+        private void SimilarExercisesGen_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new GenSimilarExercisesWindow();
+            window.ShowDialog();
+        }
+
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             this.Close();

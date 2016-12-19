@@ -15,6 +15,7 @@
             <MenuItem Header="متشابهات">
                 <MenuItem Header="إدخال" Click="SimilarEnter_Click" />
                 <MenuItem Header="تخريج" Click="SimilarGen_Click" />
+                <MenuItem Header="تمارين" Click="SimilarExercisesGen_Click" />
             </MenuItem>
         </Menu>
         <TextBox AcceptsReturn="True" />
