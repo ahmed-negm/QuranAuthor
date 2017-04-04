@@ -161,7 +161,8 @@ namespace QuranAuthor.Helps
 
         public static Bitmap LoadPage(int pageNumber)
         {
-            var bmp = new Bitmap(Path.Combine(pagesPath, pageNumber + ".png"));
+            string filename = GetFileName(pageNumber);
+            var bmp = new Bitmap(Path.Combine(pagesPath, filename + ".png"));
             var rect = new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height);
 
             var result = bmp.Clone(rect, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
@@ -531,6 +532,20 @@ namespace QuranAuthor.Helps
             }
 
             return destImage;
+        }
+
+        private static string GetFileName(int pageNumber)
+        {
+            if(pageNumber >= 100)
+            {
+                return pageNumber.ToString();
+            }
+            if(pageNumber >= 10)
+            {
+                return "0" + pageNumber.ToString();
+            }
+
+            return "00" + pageNumber.ToString();
         }
     }
 }
