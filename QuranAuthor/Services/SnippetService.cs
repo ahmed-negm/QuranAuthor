@@ -40,7 +40,7 @@ namespace QuranAuthor.Services
 
             if(chapter == null)
             {
-                throw new Exception("Can't find chapter called: " + terms[0].Trim());
+                return null;
             }
 
             snippet.ChapterId = chapter.Id;

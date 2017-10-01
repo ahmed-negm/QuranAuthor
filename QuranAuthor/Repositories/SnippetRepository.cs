@@ -182,5 +182,22 @@ namespace QuranAuthor.Repositories
             command.ExecuteNonQuery();
             transaction.Commit();
         }
+
+        public void UpdateSnippet(Snippet snippet)
+        {
+            string sql = "UPDATE snippets SET StartPoint=@StartPoint, EndPoint=@EndPoint, Text=@Text WHERE Id=@Id";
+
+            var transaction = Connection.BeginTransaction();
+
+            SQLiteCommand command = new SQLiteCommand(sql, Connection);
+
+            command.Parameters.AddWithValue("@StartPoint", snippet.StartPoint);
+            command.Parameters.AddWithValue("@EndPoint", snippet.EndPoint);
+            command.Parameters.AddWithValue("@Text", snippet.Text);
+            command.Parameters.AddWithValue("@Id", snippet.Id);
+
+            command.ExecuteNonQuery();
+            transaction.Commit();
+        }
     }
 }

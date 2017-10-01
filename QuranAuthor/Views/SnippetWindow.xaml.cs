@@ -9,6 +9,11 @@ using System.Windows.Controls;
 
 namespace QuranAuthor.Views
 {
+    public class NewSnippetEventArgs : EventArgs
+    {
+        public Snippet Snippet { get; set; }
+    }
+
     public partial class SnippetWindow : Window
     {
         private ClipboardHelper clipboardHelper;
@@ -18,6 +23,8 @@ namespace QuranAuthor.Views
         private Bitmap page;
 
         public Snippet Snippet { get; set; }
+
+        public event EventHandler<NewSnippetEventArgs> NewSnippet;
 
         public SnippetWindow()
         {
@@ -75,6 +82,10 @@ namespace QuranAuthor.Views
         private void ClipboardHelper_ItemCopied(object sender, ItemCopiedEventArgs e)
         {
             this.Snippet = snippetService.ExtractSnippet(e.Rtf);
+            if(this.Snippet == null)
+            {
+                return;
+            }
             this.Snippet.Marks = new ObservableCollection<SnippetMark>();
             this.marksLst.ItemsSource = this.Snippet.Marks;
 
@@ -84,6 +95,13 @@ namespace QuranAuthor.Views
 
             Snippet = BitmapHelper.CalculatePageSelection(Snippet, selection);
 
+            LoadSnippet();
+            this.Activate();
+            OnNewSnippet(this.Snippet);
+        }
+
+        public void LoadSnippet()
+        {
             LoadImage();
             RenderSelection();
             txtVerse.Text = Snippet.Text;
@@ -94,7 +112,6 @@ namespace QuranAuthor.Views
             suspendEvents = false;
             btnDone.IsEnabled = false;
             tabControl.Visibility = System.Windows.Visibility.Visible;
-            this.Activate();
         }
 
         private void LoadImage()
@@ -184,6 +201,17 @@ namespace QuranAuthor.Views
             this.markEnd.Value = this.Snippet.Marks[index].EndPoint;
             this.suspendEvents = false;
             this.marksgrd.Visibility = System.Windows.Visibility.Visible;
+        }
+
+        protected virtual void OnNewSnippet(Snippet snippet)
+        {
+            var e = new NewSnippetEventArgs();
+            e.Snippet = snippet;
+            EventHandler<NewSnippetEventArgs> handler = NewSnippet;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
         }
     }
 }

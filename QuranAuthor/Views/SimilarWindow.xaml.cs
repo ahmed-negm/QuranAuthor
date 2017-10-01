@@ -17,9 +17,15 @@ namespace QuranAuthor.Views
             this.numExpTop.ValueChanged += numExpTop_ValueChanged;
             this.numPage.ValueChanged += numPage_ValueChanged;
 
+
             int defaultChapter = 1;
-            int.TryParse(ConfigurationManager.AppSettings["DefaultChapter"], out defaultChapter);
-            this.ViewModel.Chapter = this.ViewModel.Chapters[defaultChapter];
+            int.TryParse(ConfigurationManager.AppSettings["SimilarDefaultChapter"], out defaultChapter);
+
+            int defaultPage = 1;
+            int.TryParse(ConfigurationManager.AppSettings["SimilarDefaultPage"], out defaultPage);
+
+            this.ViewModel.Chapter = this.ViewModel.Chapters[defaultChapter - 1];
+            this.ViewModel.CurrentPage = defaultPage;
         }
 
         public SimilarViewModel ViewModel

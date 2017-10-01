@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Configuration;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Input;
@@ -75,6 +76,7 @@ namespace QuranAuthor.ViewModels
             {
                 this.chapter = value;
                 base.OnPropertyChanged("Chapter");
+                AddOrUpdateAppSettings("TafseerDefaultChapter", this.chapter.Id.ToString());
                 this.CurrentPage = this.Chapter.StartPage;
             }
         }
@@ -151,6 +153,22 @@ namespace QuranAuthor.ViewModels
                 base.OnPropertyChanged("ExplanationType");
                 this.Explanation.Type = (ExplanationType)value;
                 this.HasIcon = this.explanation.Type != Models.ExplanationType.Explain;
+                this.Icons.Clear();
+                if (this.explanation.Type == Models.ExplanationType.Note)
+                {
+                    Enum.GetNames(typeof(NoteIcons)).ToList().ForEach(T => this.Icons.Add(T));
+                }
+                else
+                {
+                    Enum.GetNames(typeof(GuideIcons)).ToList().ForEach(T => this.Icons.Add(T));
+                }
+
+                if (this.HasIcon)
+                {
+                    this.IconIndex = 1;
+                }
+
+
                 this.Explanation.RaisePropertyChanged("Type");
                 this.SaveExplanation();
             }
@@ -163,6 +181,7 @@ namespace QuranAuthor.ViewModels
             {
                 this.currentPage = value;
                 base.OnPropertyChanged("CurrentPage");
+                AddOrUpdateAppSettings("TafseerDefaultPage", this.currentPage.ToString());
                 this.LoadSnippets();
             }
         }
@@ -378,6 +397,13 @@ namespace QuranAuthor.ViewModels
             this.Snippet = this.Snippets[this.Snippets.Count - 1];
         }
 
+        public void SnippetUpdated(Snippet snippet)
+        {
+            this.snippetRepository.UpdateSnippet(snippet);
+            this.LoadSnippets();
+            this.Snippet = this.Snippets[this.Snippets.Count - 1];
+        }
+
         public void SaveExplanation()
         {
             if (this.suspendExplanationEvents || this.Explanation == null)
@@ -506,10 +532,14 @@ namespace QuranAuthor.ViewModels
 
         private void NewExplanation()
         {
+            if(this.Snippet == null)
+            {
+                return;
+            }
             var newExplanation = new Explanation();
             newExplanation.SnippetId = this.Snippet.Id;
             newExplanation.Type = 0;
-            newExplanation.Top = 0;
+            newExplanation.Top = 110 + ((this.snippet.EndLine > 14 ? 13 : this.snippet.EndLine) * 104); ;
             newExplanation.Text = "-";
             newExplanation.Order = this.Explanations.Count;
             this.explanationRepository.AddExplanation(newExplanation);
@@ -626,6 +656,29 @@ namespace QuranAuthor.ViewModels
             this.Snippets.Clear();
             var snippets = this.snippetRepository.GetSnippets(this.chapter.Id, this.CurrentPage);
             snippets.ForEach(S => this.Snippets.Add(S));
+        }
+
+        public static void AddOrUpdateAppSettings(string key, string value)
+        {
+            try
+            {
+                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                var settings = configFile.AppSettings.Settings;
+                if (settings[key] == null)
+                {
+                    settings.Add(key, value);
+                }
+                else
+                {
+                    settings[key].Value = value;
+                }
+                configFile.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+            }
+            catch (ConfigurationErrorsException)
+            {
+                Console.WriteLine("Error writing app settings");
+            }
         }
 
         #endregion

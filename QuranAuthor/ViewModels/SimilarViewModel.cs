@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Configuration;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Input;
@@ -85,6 +86,7 @@ namespace QuranAuthor.ViewModels
             {
                 this.chapter = value;
                 base.OnPropertyChanged("Chapter");
+                AddOrUpdateAppSettings("SimilarDefaultChapter", this.chapter.Id.ToString());
                 this.CurrentPage = this.Chapter.StartPage;
             }
         }
@@ -184,6 +186,7 @@ namespace QuranAuthor.ViewModels
             {
                 this.currentPage = value;
                 base.OnPropertyChanged("CurrentPage");
+                AddOrUpdateAppSettings("SimilarDefaultPage", this.currentPage.ToString());
                 this.LoadSnippets();
             }
         }
@@ -866,6 +869,29 @@ namespace QuranAuthor.ViewModels
             var similars = this.snippetRepository.GetSnippetsByParentId(this.Snippet.Id);
             similars.ForEach(S => this.SimilarSnippets.Add(S));
             this.DrawPage();
+        }
+
+        public static void AddOrUpdateAppSettings(string key, string value)
+        {
+            try
+            {
+                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                var settings = configFile.AppSettings.Settings;
+                if (settings[key] == null)
+                {
+                    settings.Add(key, value);
+                }
+                else
+                {
+                    settings[key].Value = value;
+                }
+                configFile.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+            }
+            catch (ConfigurationErrorsException)
+            {
+                Console.WriteLine("Error writing app settings");
+            }
         }
 
         #endregion

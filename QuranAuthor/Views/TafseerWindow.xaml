@@ -5,7 +5,7 @@
         xmlns:Converters="clr-namespace:QuranAuthor.Converters"
         x:Class="QuranAuthor.Views.TafseerWindow"
         Title="Enter Tafseer"  Width="1360" Height="740" FlowDirection="RightToLeft" WindowStartupLocation="CenterScreen" WindowState="Maximized"
-        FontSize="20" FontFamily="GE SS Text Light" Closed="Window_Closed" Icon="../Icons/quran.ico">
+        FontSize="20" FontFamily="GE SS Text Light" Closed="Window_Closed" Loaded="Window_Loaded" Icon="../Icons/quran.ico">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
         <Converters:TypeToColorConverter x:Key="ColorConverter" />
@@ -24,6 +24,7 @@
             <StackPanel Orientation="Horizontal">
                 <Button Click="NewSnippet_Click" Width="50" Margin="0,0,5,0" Content="جديد"/>
                 <Button Command="{Binding DeleteCommand}" Width="50" Margin="0,0,5,0" Content="حذف"/>
+                <Button Width="50" Margin="0,0,5,0" Content="تعديل" Click="UpdateButton_Click"/>
                 <Button Command="{Binding UpCommand}" Width="50" Margin="0,0,5,0" Content="فوق"/>
                 <Button Command="{Binding DownCommand}" Width="50" Margin="0,0,5,0" Content="تحت"/>
                 <Button Command="{Binding OrderCommand}" Width="50" Margin="0,0,5,0" Content="ترتيب"/>

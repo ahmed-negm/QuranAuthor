@@ -20,8 +20,13 @@ namespace QuranAuthor.Views
             this.numPage.ValueChanged += numPage_ValueChanged;
 
             int defaultChapter = 1;
-            int.TryParse(ConfigurationManager.AppSettings["DefaultChapter"], out defaultChapter);
-            this.ViewModel.Chapter = this.ViewModel.Chapters[defaultChapter];
+            int.TryParse(ConfigurationManager.AppSettings["TafseerDefaultChapter"], out defaultChapter);
+
+            int defaultPage = 1;
+            int.TryParse(ConfigurationManager.AppSettings["TafseerDefaultPage"], out defaultPage);
+
+            this.ViewModel.Chapter = this.ViewModel.Chapters[defaultChapter - 1];
+            this.ViewModel.CurrentPage = defaultPage;
         }
 
         public TafseerViewModel ViewModel
@@ -48,6 +53,29 @@ namespace QuranAuthor.Views
         private void Window_Closed(object sender, System.EventArgs e)
         {
             this.ViewModel.SaveExplanation();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            SnippetWindow snipetWindow = new SnippetWindow();
+            snipetWindow.NewSnippet += SnipetWindow_NewSnippet;
+            snipetWindow.Show();
+            this.Activate();
+        }
+
+        private void SnipetWindow_NewSnippet(object sender, NewSnippetEventArgs e)
+        {
+            if(e.Snippet.Top < 0 || e.Snippet.StartPoint < 0 || e.Snippet.EndPoint < 0)
+            {
+                return;
+            }
+            if (this.ViewModel.Explanation != null)
+            {
+                this.ViewModel.ExplanationText = this.txtExp.Text;
+            }
+            this.ViewModel.SnippetTaken(e.Snippet);
+            this.Activate();
+            this.NewExp_Click(null, null);
         }
 
         private void numExpTop_ValueChanged(object sender, System.EventArgs e)
@@ -86,6 +114,21 @@ namespace QuranAuthor.Views
             this.ViewModel.NewExpCommand.Execute(null);
             txtExp.SelectAll();
             txtExp.Focus();
+        }
+
+        private void UpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(this.ViewModel.Snippet == null)
+            {
+                return;
+            }
+            SnippetWindow snipetWindow = new SnippetWindow();
+            snipetWindow.Snippet = this.ViewModel.Snippet;
+            snipetWindow.LoadSnippet();
+            if (snipetWindow.ShowDialog() == true && snipetWindow.Snippet != null)
+            {
+                this.ViewModel.SnippetUpdated(snipetWindow.Snippet);
+            }
         }
     }
 }
